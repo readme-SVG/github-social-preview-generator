@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Social Preview Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --canvas: #08090d;
+            --surface: #0e1117;
+            --surface2: #151a23;
+            --border: #222a35;
+            --fg: #e2e8f0;
+            --fg2: #8b95a5;
+            --fg3: #515c6b;
+            --blue: #58a6ff;
+            --green: #2dba4e;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--canvas);
+            color: var(--fg);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 48px 24px 80px;
+        }
+
+        .top-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; font-weight: 500;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--fg3); margin-bottom: 16px;
+        }
+        h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 36px; text-align: center; }
+        h1 span { color: var(--blue); }
+
+        .input-row { display: flex; gap: 10px; width: 100%; max-width: 680px; margin-bottom: 16px; }
+        .input-row input {
+            flex: 1; background: var(--surface); border: 1px solid var(--border);
+            color: var(--fg); font-family: 'JetBrains Mono', monospace; font-size: 14px;
+            padding: 14px 18px; border-radius: 10px; outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-row input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(88,166,255,0.12); }
+        .input-row input::placeholder { color: var(--fg3); }
+
+        .btn-fetch {
+            background: var(--blue); color: #fff; border: none;
+            padding: 14px 24px; border-radius: 10px;
+            font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600;
+            cursor: pointer; white-space: nowrap;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+        .btn-fetch:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-fetch:active { transform: translateY(0); }
+        .btn-fetch:disabled { opacity: 0.4; cursor: wait; transform: none; }
+
+        .status {
+            font-size: 13px; color: var(--fg3); min-height: 20px;
+            margin-bottom: 24px; font-family: 'JetBrains Mono', monospace;
+        }
+        .status.error { color: #f85149; }
+        .status.ok { color: var(--green); }
+
+        .theme-row { display: flex; gap: 8px; margin-bottom: 28px; align-items: center; }
+        .theme-label { font-size: 16px; color: var(--fg3); margin-right: 4px; font-weight: 500; }
+        .theme-dot {
+            width: 28px; height: 28px; border-radius: 50%;
+            border: 2px solid transparent; cursor: pointer;
+            transition: border-color 0.15s, transform 0.15s;
+        }
+        .theme-dot:hover { transform: scale(1.15); }
+        .theme-dot.active { border-color: #fff; }
+        .theme-dot[data-theme="blue"]   { background: linear-gradient(135deg, #1a3a5c, #58a6ff); }
+        .theme-dot[data-theme="green"]  { background: linear-gradient(135deg, #0f3d1a, #2dba4e); }
+        .theme-dot[data-theme="purple"] { background: linear-gradient(135deg, #2d1854, #a371f7); }
+        .theme-dot[data-theme="orange"] { background: linear-gradient(135deg, #4a2000, #e3803b); }
+        .theme-dot[data-theme="red"]    { background: linear-gradient(135deg, #4a0d0d, #f85149); }
+        .theme-dot[data-theme="cyan"]   { background: linear-gradient(135deg, #0a3040, #39c5cf); }
+
+        .dl-row { display: flex; gap: 10px; margin-bottom: 32px; align-items: center; }
+        .btn-dl {
+            background: var(--green); color: #fff; border: none;
+            padding: 16px 24px; border-radius: 10px;
+            font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; gap: 8px;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+        .btn-dl:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-dl:disabled { opacity: 0.4; cursor: wait; }
+        .btn-dl-secondary {
+            background: var(--surface2); color: var(--fg);
+            border: 1px solid var(--border); padding: 16px 20px; border-radius: 10px;
+            font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500;
+            cursor: pointer; transition: background 0.15s;
+        }
+        .btn-dl-secondary:hover { background: #1c2230; }
+        .dim { font-size: 16px; color: var(--fg3); font-family: 'JetBrains Mono', monospace; margin-left: 8px; }
+
+        /* ═══ 1280×640 CAPTURE ═══ */
+        .frame {
+            border: 1px solid var(--border); border-radius: 14px;
+            overflow: hidden; box-shadow: 0 0 80px rgba(88,166,255,0.04);
+            position: relative;
+        }
+        .card {
+            width: 1280px; height: 640px;
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column;
+            font-family: 'Outfit', sans-serif;
+            background: #0d1117;
+        }
+
+        /* ── BG (Pure CSS) ── */
+        .card-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+        .card-bg-blob1 { position: absolute; width: 900px; height: 700px; top: -180px; left: -120px; border-radius: 50%; filter: blur(120px); opacity: 0.25; transition: background 0.5s; }
+        .card-bg-blob2 { position: absolute; width: 700px; height: 600px; bottom: -200px; right: -100px; border-radius: 50%; filter: blur(140px); opacity: 0.15; transition: background 0.5s; }
+        .card-bg-blob3 { position: absolute; width: 500px; height: 400px; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; filter: blur(100px); opacity: 0.1; transition: background 0.5s; }
+        
+        .card-bg-grain { position: absolute; inset: 0; mix-blend-mode: overlay; opacity: 0.3; }
+        .card-bg-grain svg { width: 100%; height: 100%; }
+
+        /* ── Header 77px ── */
+        .card-header {
+            position: relative; z-index: 10; height: 77px;
+            display: flex; align-items: center; padding: 0 24px;
+            background: #161b22; border-bottom: 1px solid #21262d; flex-shrink: 0;
+        }
+        .gh-logo { fill: #f0f6fc; width: 50px; height: 50px; margin-right: 16px; flex-shrink: 0; }
+        .gh-path {
+            display: flex; align-items: center; background: #0d1117;
+            border: 1px solid #30363d; border-radius: 6px;
+            padding: 0 5px; height: 36px; min-width: 320px;
+        }
+        .gh-path-text {
+            flex: 1; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            font-size: 16px; font-weight: 400; color: #8b949e;
+            padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .gh-path-slash {
+            border: 1px solid #30363d; border-radius: 4px; color: #8b949e;
+            font-size: 16px; padding: 1px 7px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; flex-shrink: 0;
+        }
+        .hdr-spacer { flex: 1; }
+        .hdr-nav { display: flex; gap: 28px; margin-left: 32px; margin-right: 32px; }
+        .hdr-nav span { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 600; color: #f0f6fc; }
+        .hdr-btns { display: flex; gap: 16px; }
+        .hdr-btn-group { display: flex; }
+        .hdr-btn {
+            background: #21262d; border: 1px solid #30363d; color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            font-size: 16px; font-weight: 500; padding: 4px 16px; display: flex; align-items: center; gap: 6px; height: 35px;
+        }
+        .hdr-btn:first-child { border-radius: 6px 0 0 6px; }
+        .hdr-btn.cnt { border-left: none; border-radius: 0 6px 6px 0; background: #0d1117; font-size: 16px; font-weight: 500; }
+        .hdr-btn-icon { fill: #8b949e; width: 16px; height: 16px; }
+
+        /* ── Body ── */
+        .card-body { 
+            position: relative; z-index: 10; flex: 1; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            padding: 40px 80px;
+        }
+        .bento-container {
+            width: 100%; max-width: 960px;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+        .main-repo-title {
+            font-size: 56px; font-weight: 800; letter-spacing: -0.04em; 
+            color: #fff; line-height: 1.1; margin-bottom: 16px;
+        }
+        .main-repo-desc {
+            font-size: 22px; font-weight: 400; color: rgba(255,255,255,0.7); 
+            line-height: 1.5; margin-bottom: 40px; max-width: 800px;
+        }
+        
+        .bento-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%;
+        }
+        .bento-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: left;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column;
+        }
+        .bento-box-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--tc, #58a6ff);
+            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .bento-box-title::before {
+            content: ''; display: block; width: 8px; height: 8px; 
+            border-radius: 50%; background: var(--tc, #58a6ff);
+        }
+        .bento-box-text {
+            font-size: 17px; color: #e2e8f0; line-height: 1.5; font-weight: 400;
+        }
+
+        /* ── Footer 52px ── */
+        .card-footer {
+            position: relative; z-index: 10; height: 52px; display: flex; align-items: center;
+            justify-content: center; gap: 36px; padding: 0 36px;
+            background: rgba(22,27,34,0.6); backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
+        }
+        .foot-langs { display: flex; gap: 16px; }
+        .foot-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg2); font-family: 'JetBrains Mono', monospace; }
+        .foot-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; }
+        .foot-icon { fill: var(--fg3); width: 14px; height: 14px; flex-shrink: 0; }
+
+        /* loading */
+        .loading-overlay { display: none; position: absolute; inset: 0; z-index: 20; background: rgba(13,17,23,0.85); align-items: center; justify-content: center; border-radius: 14px; }
+        .loading-overlay.active { display: flex; flex-direction: column; gap: 12px; }
+        .spinner { width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite; }
+        .loading-text { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--fg2); text-align: center; max-width: 80%; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="top-label">Generator</div>
+    <h1>GitHub Social <span>Preview</span></h1>
+
+    <div class="input-row">
+        <input type="text" id="inp" placeholder="https://github.com/owner/repo" autocomplete="off" spellcheck="false">
+        <button class="btn-fetch" id="btn-go">Generate</button>
+    </div>
+    
+    <div class="status" id="status"></div>
+
+    <div class="theme-row">
+        <span class="theme-label">Theme</span>
+        <div class="theme-dot active" data-theme="blue"></div>
+        <div class="theme-dot" data-theme="green"></div>
+        <div class="theme-dot" data-theme="purple"></div>
+        <div class="theme-dot" data-theme="orange"></div>
+        <div class="theme-dot" data-theme="red"></div>
+        <div class="theme-dot" data-theme="cyan"></div>
+    </div>
+
+    <div class="dl-row">
+        <button class="btn-dl" id="btn-jpg">
+            <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M2.75 14A1.75 1.75 0 011 12.25v-2.5a.75.75 0 011.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25v-2.5a.75.75 0 011.5 0v2.5A1.75 1.75 0 0113.25 14H2.75z"/><path d="M7.25 7.689V2a.75.75 0 011.5 0v5.689l1.97-1.969a.749.749 0 111.06 1.06l-3.25 3.25a.749.749 0 01-1.06 0L4.22 6.78a.749.749 0 111.06-1.06l1.97 1.969z"/></svg>
+            JPEG
+        </button>
+        <button class="btn-dl-secondary" id="btn-png">PNG</button>
+        <span class="dim">1280 × 640</span>
+    </div>
+
+    <div class="frame">
+        <div class="loading-overlay" id="loader">
+            <div class="spinner"></div>
+            <div class="loading-text" id="loader-text">Fetching data...</div>
+        </div>
+        <div class="card" id="capture">
+            
+            <div class="card-bg">
+                <div class="card-bg-blob1" id="blob1"></div>
+                <div class="card-bg-blob2" id="blob2"></div>
+                <div class="card-bg-blob3" id="blob3"></div>
+                <div class="card-bg-grain" id="grain-layer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640">
+                        <filter id="grain">
+                            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="5" stitchTiles="stitch"/>
+                            <feColorMatrix type="saturate" values="0"/>
+                        </filter>
+                        <rect width="100%" height="100%" filter="url(#grain)" opacity="0.18"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="card-header">
+                <svg class="gh-logo" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                <div class="gh-path">
+                    <span class="gh-path-text" id="o-repo-display">owner/repo</span>
+                    <span class="gh-path-slash">/</span>
+                </div>
+                <div class="hdr-nav">
+                    <span>Full requests</span>
+                    <span>Issues</span>
+                    <span>Moderactions</span>
+                </div>
+                <div class="hdr-spacer"></div>
+                <div class="hdr-btns">
+                    <div class="hdr-btn-group">
+                        <div class="hdr-btn">
+                            <svg class="hdr-btn-icon" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+                            Star
+                        </div>
+                        <div class="hdr-btn cnt" id="o-stars">0</div>
+                    </div>
+                    <div class="hdr-btn-group">
+                        <div class="hdr-btn">
+                            <svg class="hdr-btn-icon" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm3-8.75a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
+                            Fork
+                        </div>
+                        <div class="hdr-btn cnt" id="o-forks">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="bento-container">
+                    <div class="main-repo-title" id="o-title">Repository</div>
+                    <div class="main-repo-desc" id="o-desc">Paste a GitHub repository link and press Generate</div>
+                    
+                    <div class="bento-grid" id="o-features">
+                        <div class="bento-box">
+                            <div class="bento-box-title">Activity</div>
+                            <div class="bento-box-text">Repository stats will appear here.</div>
+                        </div>
+                        <div class="bento-box">
+                            <div class="bento-box-title">Tech Stack</div>
+                            <div class="bento-box-text">Language details will appear here.</div>
+                        </div>
+                        <div class="bento-box">
+                            <div class="bento-box-title">Details</div>
+                            <div class="bento-box-text">License and branch info will appear here.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <div class="foot-langs" id="o-langs">
+                    <div class="foot-item">
+                        <span class="foot-dot" style="background:#8b949e"></span>
+                        <span>Code</span>
+                    </div>
+                </div>
+                <div class="foot-item" id="o-lic-wrap" style="display:none;">
+                    <svg class="foot-icon" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.75.75a.75.75 0 00-1.5 0V2h-.984c-.305 0-.604.08-.869.23l-1.288.737A.25.25 0 013.984 3H1.75a.75.75 0 000 1.5h.428L.066 9.192a.75.75 0 00.154.838l.53-.53-.53.53v.001l.002.002.004.004.012.011.048.042.104.08c.09.065.216.148.378.22.344.195.83.396 1.466.396.636 0 1.122-.2 1.466-.396a2.534 2.534 0 00.546-.386l.012-.011.004-.004.002-.002-.53-.53.53.53a.75.75 0 00.154-.838L2.822 4.5h.162c.305 0 .604-.08.869-.23l1.289-.737a.25.25 0 01.124-.033h.984V13h-2.5a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-2.5V3.5h.984a.25.25 0 01.124.033l1.289.737c.265.15.564.23.869.23h.162l-2.112 4.692a.75.75 0 00.154.838l.53-.53-.53.53v.001l.002.002.004.004.012.011.048.042.104.08c.09.065.216.148.378.22.344.195.83.396 1.466.396.636 0 1.122-.2 1.466-.396a2.534 2.534 0 00.546-.386l.012-.011.004-.004.002-.002-.53-.53.53.53a.75.75 0 00.154-.838L13.178 4.5h.428a.75.75 0 000-1.5h-2.234a.25.25 0 01-.124-.033l-1.289-.737A1.75 1.75 0 009.091 2H8.75V.75z"/></svg>
+                    <span id="o-lic">MIT</span>
+                </div>
+                <div class="foot-item">
+                    <svg class="foot-icon" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1h-8a1 1 0 00-1 1v6.708A2.486 2.486 0 014.5 9h8V1.5zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/></svg>
+                    <span id="o-size">—</span>
+                </div>
+                <div class="foot-item">
+                    <svg class="foot-icon" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122V6c0 .73-.593 1.322-1.322 1.322H7.927A.678.678 0 007.25 8v.878a2.25 2.25 0 11-1.5 0V5.372a2.25 2.25 0 111.5 0v1.836l.678-.678A2.822 2.822 0 019.178 5.822h1.572V5.372a2.25 2.25 0 012.25-2.122zM4.25 12.75a.75.75 0 100-1.5.75.75 0 000 1.5zm0-8.5a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
+                    <span id="o-branch">main</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+const LANG_COLORS={"JavaScript":"#f1e05a","TypeScript":"#3178c6","Python":"#3572A5","Java":"#b07219","C++":"#f34b7d","C#":"#178600","C":"#555555","Go":"#00ADD8","Rust":"#dea584","Ruby":"#701516","PHP":"#4F5D95","Swift":"#F05138","Kotlin":"#A97BFF","Dart":"#00B4AB","Scala":"#c22d40","R":"#198CE7","Shell":"#89e051","Lua":"#000080","Perl":"#0298c3","Haskell":"#5e5086","Elixir":"#6e4a7e","Clojure":"#db5855","HTML":"#e34c26","CSS":"#563d7c","SCSS":"#c6538c","Vue":"#41b883","Svelte":"#ff3e00","Jupyter Notebook":"#DA5B0B","Dockerfile":"#384d54","Makefile":"#427819","Nix":"#7e7eff","Zig":"#ec915c","OCaml":"#3be133","Objective-C":"#438eff","PowerShell":"#012456","HCL":"#844FBA","Solidity":"#AA6746","Mojo":"#ff4c1a"};
+
+const THEMES = {
+    blue:   { b1:'#1a4f8a', b2:'#0c3a70', b3:'#2060a8', tc:'#58a6ff' },
+    green:  { b1:'#145a28', b2:'#0d3d1a', b3:'#1a7a35', tc:'#2dba4e' },
+    purple: { b1:'#3d1e6e', b2:'#2a1550', b3:'#5530a0', tc:'#a371f7' },
+    orange: { b1:'#6b3510', b2:'#4a2000', b3:'#8a4a18', tc:'#e3803b' },
+    red:    { b1:'#6e1a1a', b2:'#4a0d0d', b3:'#8a2525', tc:'#f85149' },
+    cyan:   { b1:'#0e4050', b2:'#0a3040', b3:'#155a6a', tc:'#39c5cf' },
+};
+
+let currentTheme = 'blue';
+
+function applyTheme(t) {
+    currentTheme = t;
+    const th = THEMES[t];
+    document.getElementById('blob1').style.background = `radial-gradient(ellipse, ${th.b1}, transparent 70%)`;
+    document.getElementById('blob2').style.background = `radial-gradient(ellipse, ${th.b2}, transparent 70%)`;
+    document.getElementById('blob3').style.background = `radial-gradient(ellipse, ${th.b3}, transparent 70%)`;
+    document.documentElement.style.setProperty('--tc', th.tc);
+    document.querySelectorAll('.theme-dot').forEach(d => d.classList.toggle('active', d.dataset.theme === t));
+}
+
+function fmt(n) {
+    if (n >= 1e6) return (n/1e6).toFixed(1).replace(/\.0$/,'')+'M';
+    if (n >= 1e3) return (n/1e3).toFixed(1).replace(/\.0$/,'')+'k';
+    return String(n);
+}
+function fmtSize(kb) { return kb >= 1024 ? (kb/1024).toFixed(1).replace(/\.0$/,'') + ' MB' : kb + ' KB'; }
+function titleCase(s) { return s.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()); }
+
+function parseInput(raw) {
+    raw = raw.trim(); if (!raw) return null;
+    try {
+        if (raw.includes('github.com')) {
+            const parts = new URL(raw.startsWith('http') ? raw : 'https://'+raw).pathname.split('/').filter(Boolean);
+            if (parts.length >= 2) return { owner: parts[0], repo: parts[1] };
+        }
+    } catch(e) {}
+    if (raw.includes('/')) { const [o,r] = raw.split('/'); if (o&&r) return {owner:o,repo:r}; }
+    return null;
+}
+
+function updateLoaderText(text) {
+    document.getElementById('loader-text').textContent = text;
+}
+
+const status = document.getElementById('status');
+const loader = document.getElementById('loader');
+
+async function generate() {
+    const parsed = parseInput(document.getElementById('inp').value);
+    if (!parsed) { status.textContent = 'Enter a valid GitHub URL or owner/repo'; status.className = 'status error'; return; }
+
+    status.textContent = 'Fetching data...'; status.className = 'status';
+    updateLoaderText('Fetching GitHub data...');
+    loader.classList.add('active');
+    document.getElementById('btn-go').disabled = true;
+
+    try {
+        const res = await fetch(`https://api.github.com/repos/${parsed.owner}/${parsed.repo}`);
+        if (!res.ok) throw new Error(res.status === 404 ? 'Repository not found' : 'API error ' + res.status);
+        const d = await res.json();
+
+        // 1. Установка данных в шапке (настоящие звезды и форки)
+        document.getElementById('o-repo-display').textContent = d.owner.login + '/' + d.name;
+        document.getElementById('o-stars').textContent = fmt(d.stargazers_count);
+        document.getElementById('o-forks').textContent = fmt(d.forks_count);
+        document.getElementById('o-title').textContent = titleCase(d.name);
+        
+        // 2. Языки программирования
+        let topLangs = [];
+        try {
+            const langRes = await fetch(d.languages_url);
+            const langData = await langRes.json();
+            topLangs = Object.entries(langData).sort((a,b) => b[1] - a[1]).slice(0, 4);
+            const langsContainer = document.getElementById('o-langs');
+            if (topLangs.length > 0) {
+                langsContainer.innerHTML = topLangs.map(([lang, _]) => `
+                    <div class="foot-item"><span class="foot-dot" style="background:${LANG_COLORS[lang] || '#8b949e'}"></span><span>${lang}</span></div>
+                `).join('');
+            } else {
+                langsContainer.innerHTML = `<div class="foot-item"><span class="foot-dot" style="background:#8b949e"></span><span>Code</span></div>`;
+            }
+        } catch(e) {}
+
+        const mainLang = topLangs.length > 0 ? topLangs[0][0] : 'Not specified';
+
+        // 3. Лицензия, размер, ветка
+        const lic = d.license ? d.license.spdx_id : null;
+        let displayLic = lic || '—';
+        if (displayLic === 'NOASSERTION') displayLic = 'Custom';
+
+        document.getElementById('o-lic').textContent = lic || '—';
+        document.getElementById('o-lic-wrap').style.display = lic && lic !== 'NOASSERTION' ? 'flex' : 'none';
+
+        document.getElementById('o-size').textContent = fmtSize(d.size);
+        document.getElementById('o-branch').textContent = d.default_branch || 'main';
+
+        applyTheme(currentTheme);
+
+        // 4. Логика шаблона Bento (БЕЗ использования ИИ)
+        let finalDesc = d.description || "No description provided for this repository.";
+        
+        let finalFeaturesHTML = `
+            <div class="bento-box">
+                <div class="bento-box-title">Activity</div>
+                <div class="bento-box-text">${fmt(d.stargazers_count)} Stars • ${fmt(d.forks_count)} Forks<br>${fmt(d.open_issues_count || 0)} Open Issues</div>
+            </div>
+            <div class="bento-box">
+                <div class="bento-box-title">Tech Stack</div>
+                <div class="bento-box-text">Primary language: ${mainLang}<br>Size: ${fmtSize(d.size)}</div>
+            </div>
+            <div class="bento-box">
+                <div class="bento-box-title">Details</div>
+                <div class="bento-box-text">Default branch: ${d.default_branch || 'main'}<br>License: ${displayLic}</div>
+            </div>
+        `;
+        
+        document.getElementById('o-desc').textContent = finalDesc;
+        document.getElementById('o-features').innerHTML = finalFeaturesHTML;
+        
+        status.textContent = '✓ Done'; status.className = 'status ok';
+
+    } catch(err) {
+        status.textContent = err.message; status.className = 'status error';
+    } finally {
+        loader.classList.remove('active');
+        document.getElementById('btn-go').disabled = false;
+    }
+}
+
+document.getElementById('btn-go').addEventListener('click', generate);
+document.getElementById('inp').addEventListener('keydown', e => { if (e.key==='Enter') generate(); });
+document.querySelectorAll('.theme-dot').forEach(dot => { dot.addEventListener('click', () => applyTheme(dot.dataset.theme)); });
+
+function download(type) {
+    const btn = document.getElementById(type==='jpeg'?'btn-jpg':'btn-png');
+    const orig = btn.innerHTML; btn.textContent = 'Wait…'; btn.disabled = true;
+    html2canvas(document.getElementById('capture'), {
+        scale: 1, backgroundColor: '#0d1117', width: 1280, height: 640
+    }).then(canvas => {
+        const a = document.createElement('a');
+        const safe = (document.getElementById('o-repo-display').textContent).replace(/[^a-zA-Z0-9_-]/g,'_');
+        a.download = safe+'-social-preview.'+(type==='jpeg'?'jpg':'png');
+        a.href = canvas.toDataURL(type==='jpeg'?'image/jpeg':'image/png', 0.95);
+        a.click(); btn.innerHTML = orig; btn.disabled = false;
+    }).catch(() => { btn.textContent='Error'; setTimeout(()=>{btn.innerHTML=orig;btn.disabled=false;},2000); });
+}
+
+document.getElementById('btn-jpg').addEventListener('click', () => download('jpeg'));
+document.getElementById('btn-png').addEventListener('click', () => download('png'));
+applyTheme('blue');
+</script>
+</body>
+</html>
