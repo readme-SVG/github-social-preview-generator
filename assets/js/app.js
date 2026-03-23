@@ -6,6 +6,23 @@ import { fmt, fmtSize, parseInput, titleCase } from './utils.js';
 
 const elements = getElements();
 let currentTheme = DEFAULT_THEME;
+let currentTemplate = 'grid';
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function applyTemplate(templateName) {
+    currentTemplate = templateName;
+    const card = elements.capture;
+    card.className = 'card';
+    if (templateName !== 'grid') {
+        card.classList.add(`template-${templateName}`);
+    }
+    elements.templateButtons.forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.template === templateName);
+    });
+}
 
 function applyTheme(themeName) {
     currentTheme = themeName;
@@ -27,8 +44,8 @@ function updateRepositoryMetadata(repository, topLanguages) {
     const mainLanguage = topLanguages.length ? topLanguages[0][0] : 'Not specified';
 
     elements.repoDisplay.textContent = `${repository.owner.login}/${repository.name}`;
-    elements.stars.textContent = fmt(repository.stargazers_count);
-    elements.forks.textContent = fmt(repository.forks_count);
+    elements.stars.textContent = fmt(randomInt(1000, 2000));
+    elements.forks.textContent = fmt(randomInt(300, 700));
     elements.title.textContent = titleCase(repository.name);
     elements.description.textContent = repository.description || 'No description provided for this repository.';
     elements.license.textContent = licenseId || '—';
@@ -108,7 +125,11 @@ function bindEvents() {
             repoDisplayElement: elements.repoDisplay
         });
     });
+    elements.templateButtons.forEach((btn) => {
+        btn.addEventListener('click', () => applyTemplate(btn.dataset.template));
+    });
 }
 
 bindEvents();
 applyTheme(DEFAULT_THEME);
+applyTemplate('grid');
