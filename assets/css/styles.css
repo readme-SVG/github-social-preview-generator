@@ -131,6 +131,45 @@ h1 span {
     align-items: center;
 }
 
+.template-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 28px;
+    align-items: center;
+}
+
+.template-label {
+    font-size: 16px;
+    color: var(--fg3);
+    margin-right: 4px;
+    font-weight: 500;
+}
+
+.template-btn {
+    background: var(--surface2);
+    color: var(--fg2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.template-btn:hover {
+    border-color: var(--tc, var(--blue));
+    color: #f0f6fc;
+}
+
+.template-btn.active {
+    border-color: var(--tc, var(--blue));
+    color: #f0f6fc;
+    background: rgba(88, 166, 255, 0.1);
+}
+
 .theme-label {
     font-size: 16px;
     color: var(--fg3);
@@ -507,6 +546,91 @@ h1 span {
     color: #e2e8f0;
     line-height: 1.5;
     font-weight: 400;
+}
+
+.card.template-timeline .card-body {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 56px 80px 44px;
+}
+
+.card.template-timeline .bento-container {
+    align-items: flex-start;
+    text-align: left;
+    max-width: 1120px;
+}
+
+.card.template-timeline .main-repo-title {
+    max-width: 820px;
+}
+
+.card.template-timeline .main-repo-desc {
+    max-width: 900px;
+    margin-bottom: 28px;
+}
+
+.card.template-timeline .bento-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    max-width: 920px;
+}
+
+.card.template-timeline .bento-box {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 20px;
+    border-left: 3px solid var(--tc, #58a6ff);
+    border-radius: 12px;
+    padding: 18px 20px;
+}
+
+.card.template-timeline .bento-box-title {
+    min-width: 170px;
+    margin-bottom: 0;
+}
+
+.card.template-timeline .bento-box-title::before {
+    display: none;
+}
+
+.card.template-spotlight .card-body {
+    padding: 36px 68px 28px;
+}
+
+.card.template-spotlight .bento-container {
+    max-width: 1140px;
+}
+
+.card.template-spotlight .main-repo-title {
+    font-size: 68px;
+    margin-bottom: 14px;
+}
+
+.card.template-spotlight .main-repo-desc {
+    font-size: 24px;
+    max-width: 900px;
+    margin-bottom: 28px;
+}
+
+.card.template-spotlight .bento-grid {
+    gap: 16px;
+}
+
+.card.template-spotlight .bento-box {
+    background: rgba(13, 17, 23, 0.52);
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+    padding: 18px 20px;
+}
+
+.card.template-spotlight .bento-box-title {
+    margin-bottom: 8px;
+    font-size: 12px;
+}
+
+.card.template-spotlight .bento-box-text {
+    font-size: 20px;
+    line-height: 1.45;
 }
 
 .card-footer {
