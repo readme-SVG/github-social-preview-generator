@@ -6,7 +6,6 @@ import { fmt, fmtSize, parseInput, titleCase } from './utils.js';
 
 const elements = getElements();
 let currentTheme = DEFAULT_THEME;
-const TEMPLATE_CLASS_PREFIX = 'template-';
 
 function applyTheme(themeName) {
     currentTheme = themeName;
@@ -19,20 +18,6 @@ function applyTheme(themeName) {
 
     elements.themeDots.forEach((dot) => {
         dot.classList.toggle('active', dot.dataset.theme === themeName);
-    });
-}
-
-function applyTemplate(templateName) {
-    const templateClasses = elements.capture.classList
-        .value
-        .split(' ')
-        .filter((className) => className.startsWith(TEMPLATE_CLASS_PREFIX));
-
-    templateClasses.forEach((className) => elements.capture.classList.remove(className));
-    elements.capture.classList.add(`${TEMPLATE_CLASS_PREFIX}${templateName}`);
-
-    elements.templateButtons.forEach((button) => {
-        button.classList.toggle('active', button.dataset.template === templateName);
     });
 }
 
@@ -107,9 +92,6 @@ function bindEvents() {
     elements.themeDots.forEach((dot) => {
         dot.addEventListener('click', () => applyTheme(dot.dataset.theme));
     });
-    elements.templateButtons.forEach((button) => {
-        button.addEventListener('click', () => applyTemplate(button.dataset.template));
-    });
     elements.downloadJpgButton.addEventListener('click', () => {
         downloadPreview({
             type: 'jpeg',
@@ -130,4 +112,3 @@ function bindEvents() {
 
 bindEvents();
 applyTheme(DEFAULT_THEME);
-applyTemplate('grid');
