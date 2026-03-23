@@ -591,3 +591,251 @@ h1 span {
         transform: rotate(360deg);
     }
 }
+
+/* Template selector row */
+.template-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    align-items: center;
+}
+
+.template-label {
+    font-size: 16px;
+    color: var(--fg3);
+    margin-right: 4px;
+    font-weight: 500;
+}
+
+.template-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--fg2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.template-btn:hover {
+    background: var(--surface2);
+    color: var(--fg);
+}
+
+.template-btn.active {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+}
+
+/* ===================== */
+/* Template: Timeline    */
+/* ===================== */
+.template-timeline .card-body {
+    align-items: flex-start;
+    padding: 32px 80px;
+}
+
+.template-timeline .bento-container {
+    align-items: flex-start;
+    text-align: left;
+    max-width: 100%;
+}
+
+.template-timeline .main-repo-title {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.template-timeline .main-repo-desc {
+    font-size: 18px;
+    margin-bottom: 28px;
+    max-width: 700px;
+}
+
+.template-timeline .bento-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+    border-left: 2px solid var(--tc, #58a6ff);
+    padding-left: 24px;
+    max-width: 600px;
+}
+
+.template-timeline .bento-box {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 10px 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    position: relative;
+}
+
+.template-timeline .bento-box::before {
+    content: '';
+    position: absolute;
+    left: -29px;
+    top: 16px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--tc, #58a6ff);
+}
+
+.template-timeline .bento-box-title {
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.template-timeline .bento-box-text {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+/* ===================== */
+/* Template: Spotlight   */
+/* ===================== */
+.template-spotlight .card-body {
+    justify-content: center;
+    padding: 40px 80px;
+}
+
+.template-spotlight .bento-container {
+    align-items: center;
+    text-align: center;
+}
+
+.template-spotlight .main-repo-title {
+    font-size: 72px;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #fff 0%, var(--tc, #58a6ff) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.template-spotlight .main-repo-desc {
+    font-size: 24px;
+    margin-bottom: 0;
+    max-width: 750px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.template-spotlight .bento-grid {
+    display: none;
+}
+
+/* ===================== */
+/* Template: Minimal     */
+/* ===================== */
+.template-minimal .card-body {
+    justify-content: center;
+    padding: 40px 80px;
+}
+
+.template-minimal .bento-container {
+    align-items: flex-start;
+    text-align: left;
+}
+
+.template-minimal .main-repo-title {
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    color: var(--tc, #58a6ff);
+}
+
+.template-minimal .main-repo-desc {
+    font-size: 20px;
+    margin-bottom: 32px;
+    max-width: 750px;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.6;
+}
+
+.template-minimal .bento-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    width: auto;
+}
+
+.template-minimal .bento-box {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0 32px 0 0;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+.template-minimal .bento-box + .bento-box {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    padding-left: 32px;
+}
+
+.template-minimal .bento-box-title {
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+
+.template-minimal .bento-box-text {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ===================== */
+/* Template: Compact     */
+/* ===================== */
+.template-compact .card-body {
+    padding: 28px 60px;
+}
+
+.template-compact .bento-container {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: 48px;
+    max-width: 1100px;
+}
+
+.template-compact .main-repo-title {
+    font-size: 44px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.template-compact .main-repo-desc {
+    font-size: 17px;
+    margin-bottom: 0;
+    max-width: 500px;
+    line-height: 1.5;
+}
+
+.template-compact .bento-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    width: 300px;
+    min-width: 300px;
+    flex-shrink: 0;
+}
+
+.template-compact .bento-box {
+    padding: 16px 20px;
+    border-radius: 12px;
+}
+
+.template-compact .bento-box-title {
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+
+.template-compact .bento-box-text {
+    font-size: 14px;
+}
