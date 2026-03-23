@@ -53,21 +53,27 @@ function updateRepositoryMetadata(repository, topLanguages) {
     elements.size.textContent = fmtSize(repository.size);
     elements.branch.textContent = repository.default_branch || 'main';
 
+    const createdYear = repository.created_at ? new Date(repository.created_at).getFullYear() : '—';
+    const updatedDate = repository.updated_at
+        ? new Date(repository.updated_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+        : '—';
+    const topLangs = topLanguages.slice(0, 3).map(([l]) => l).join(', ') || 'Not specified';
+
     renderFeatures(elements, [
         {
-            title: 'Activity',
+            title: 'Overview',
             lines: [
-                `${fmt(repository.stargazers_count)} Stars • ${fmt(repository.forks_count)} Forks`,
-                `${fmt(repository.open_issues_count || 0)} Open Issues`
+                `Created in ${createdYear}`,
+                `Last updated: ${updatedDate}`
             ]
         },
         {
             title: 'Tech Stack',
-            lines: [`Primary language: ${mainLanguage}`, `Size: ${fmtSize(repository.size)}`]
+            lines: [`${topLangs}`, `Size: ${fmtSize(repository.size)}`]
         },
         {
             title: 'Details',
-            lines: [`Default branch: ${repository.default_branch || 'main'}`, `License: ${displayLicense}`]
+            lines: [`Branch: ${repository.default_branch || 'main'}`, `License: ${displayLicense}`]
         }
     ]);
 }
