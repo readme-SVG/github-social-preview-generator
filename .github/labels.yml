@@ -1,0 +1,70 @@
+# Severity labels — used by trigger_action.py
+- name: "severity: critical"
+  color: "B60205"
+  description: "Requires immediate attention — security or data loss risk"
+
+- name: "severity: high"
+  color: "D93F0B"
+  description: "Significant issue that should be resolved soon"
+
+- name: "severity: medium"
+  color: "E4E669"
+  description: "Moderate issue with a known workaround"
+
+- name: "severity: low"
+  color: "0E8A16"
+  description: "Minor issue or cosmetic problem"
+
+# Type labels — standard issue/PR classification
+- name: "bug"
+  color: "D73A4A"
+  description: "Something isn't working"
+
+- name: "enhancement"
+  color: "A2EEEF"
+  description: "New feature or request"
+
+- name: "documentation"
+  color: "0075CA"
+  description: "Improvements or additions to documentation"
+
+- name: "security"
+  color: "E11D48"
+  description: "Security vulnerability or audit finding"
+
+- name: "performance"
+  color: "F9D0C4"
+  description: "Performance or optimization issue"
+
+- name: "refactor"
+  color: "D4C5F9"
+  description: "Code quality or structural improvement"
+
+- name: "dependencies"
+  color: "0366D6"
+  description: "Dependency update (Dependabot or manual)"
+
+# Workflow labels
+- name: "ai-generated"
+  color: "6F42C1"
+  description: "Automatically created by the AI Issue Generator"
+
+- name: "needs triage"
+  color: "FBCA04"
+  description: "Awaiting first review and classification"
+
+- name: "wontfix"
+  color: "FFFFFF"
+  description: "This will not be worked on"
+
+- name: "duplicate"
+  color: "CFD3D7"
+  description: "This issue or pull request already exists"
+
+- name: "good first issue"
+  color: "7057FF"
+  description: "Good for newcomers"
+
+- name: "help wanted"
+  color: "008672"
+  description: "Extra attention is needed"
