@@ -4,7 +4,12 @@ export async function downloadGif({ button, captureElement, repoDisplayElement }
     const originalMarkup = button.innerHTML;
     button.disabled = true;
 
-    const FRAME_COUNT = 15;
+    const FRAME_COUNT = 40;
+    const ANIMATION_DURATION = 4000; // ms, must match CSS animation duration
+
+    // Pause all animations so we can scrub them deterministically
+    const animations = captureElement.getAnimations({ subtree: true });
+    animations.forEach(anim => anim.pause());
 
     try {
         const response = await fetch('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js');
@@ -21,13 +26,20 @@ export async function downloadGif({ button, captureElement, repoDisplayElement }
 
         for (let i = 0; i < FRAME_COUNT; i++) {
             button.textContent = `Frame ${i + 1}/${FRAME_COUNT}…`;
+
+            // Scrub every animation to the exact timestamp for this frame
+            const frameTime = (i / FRAME_COUNT) * ANIMATION_DURATION;
+            animations.forEach(anim => { anim.currentTime = frameTime; });
+
             const canvas = await window.html2canvas(captureElement, {
                 scale: 1,
                 backgroundColor: '#0d1117'
             });
             gif.addFrame(canvas, { delay: 100 });
-            await new Promise((r) => setTimeout(r, 100));
         }
+
+        // Restore live preview before rendering
+        animations.forEach(anim => anim.play());
 
         button.textContent = 'Assembling GIF…';
         gif.render();
@@ -47,6 +59,8 @@ export async function downloadGif({ button, captureElement, repoDisplayElement }
             button.disabled = false;
         });
     } catch (error) {
+        // Restore live preview even on failure
+        animations.forEach(anim => anim.play());
         console.error(error);
         button.textContent = 'Error';
         setTimeout(() => {
