@@ -1,6 +1,6 @@
 import { DEFAULT_THEME, THEMES } from './constants.js';
 import { getElements, renderFeatures, renderLanguages, setLoading, setStatus, updateLoaderText } from './dom.js';
-import { downloadPreview } from './export.js';
+import { downloadGif, downloadPreview } from './export.js';
 import { fetchLanguages, fetchRepository } from './github.js';
 import { fmt, fmtSize, parseInput, titleCase } from './utils.js';
 
@@ -127,6 +127,13 @@ function bindEvents() {
         downloadPreview({
             type: 'png',
             button: elements.downloadPngButton,
+            captureElement: elements.capture,
+            repoDisplayElement: elements.repoDisplay
+        });
+    });
+    elements.downloadGifButton.addEventListener('click', () => {
+        downloadGif({
+            button: elements.downloadGifButton,
             captureElement: elements.capture,
             repoDisplayElement: elements.repoDisplay
         });

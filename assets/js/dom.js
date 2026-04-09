@@ -9,6 +9,7 @@ export function getElements() {
         generateButton: document.getElementById('btn-go'),
         downloadJpgButton: document.getElementById('btn-jpg'),
         downloadPngButton: document.getElementById('btn-png'),
+        downloadGifButton: document.getElementById('btn-gif'),
         capture: document.getElementById('capture'),
         repoDisplay: document.getElementById('o-repo-display'),
         stars: document.getElementById('o-stars'),
