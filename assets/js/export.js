@@ -1,76 +1,86 @@
 import { sanitizeFilename } from './utils.js';
 
-export async function downloadGif({ button, captureElement, repoDisplayElement }) {
+const GIF_WIDTH = 480;
+const GIF_HEIGHT = 240;
+const GIF_MAX_BYTES = 1_000_000;
+const GIF_FRAME_COUNT = 20;
+const GIF_FRAME_DELAY = 100;
+const GIF_QUALITY = 20;
+const FULL_WIDTH = 1280;
+const FULL_HEIGHT = 640;
+const GIF_CAPTURE_SCALE = GIF_WIDTH / FULL_WIDTH;
+
+export async function downloadGif({
+    button,
+    captureElement,
+    repoDisplayElement,
+    animationDuration,
+    setBlobsAtTime,
+    pauseBlobAnimation,
+    resumeBlobAnimation
+}) {
     const originalMarkup = button.innerHTML;
     button.disabled = true;
 
-    const FRAME_COUNT = 40;
-    const ANIMATION_DURATION = 4000; // ms, must match CSS animation duration
-
-    // Pause all animations so we can scrub them deterministically
-    const animations = captureElement.getAnimations({ subtree: true });
-    animations.forEach(anim => anim.pause());
-
     try {
-        const response = await fetch('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js');
-        const workerBlob = await response.blob();
-        const workerUrl = URL.createObjectURL(workerBlob);
+        pauseBlobAnimation();
 
         const gif = new window.GIF({
-            width: 1280,
-            height: 640,
-            quality: 10,
+            width: GIF_WIDTH,
+            height: GIF_HEIGHT,
+            quality: GIF_QUALITY,
             workers: 2,
-            workerScript: workerUrl
+            workerScript: './assets/vendor/gif.worker.js',
+            repeat: 0
         });
 
-        for (let i = 0; i < FRAME_COUNT; i++) {
-            button.textContent = `Frame ${i + 1}/${FRAME_COUNT}…`;
-
-            // Scrub every animation to the exact timestamp for this frame
-            const frameTime = (i / FRAME_COUNT) * ANIMATION_DURATION;
-            animations.forEach(anim => { anim.currentTime = frameTime; });
+        for (let i = 0; i < GIF_FRAME_COUNT; i++) {
+            button.textContent = `Frame ${i + 1}/${GIF_FRAME_COUNT}…`;
+            const frameTime = (i / GIF_FRAME_COUNT) * animationDuration;
+            setBlobsAtTime(frameTime);
 
             const canvas = await window.html2canvas(captureElement, {
-                scale: 1,
-                backgroundColor: '#0d1117'
+                scale: GIF_CAPTURE_SCALE,
+                backgroundColor: '#0d1117',
+                width: FULL_WIDTH,
+                height: FULL_HEIGHT
             });
-            gif.addFrame(canvas, { delay: 100 });
+
+            gif.addFrame(canvas, { delay: GIF_FRAME_DELAY });
         }
 
-        // Restore live preview before rendering
-        animations.forEach(anim => anim.play());
-
         button.textContent = 'Assembling GIF…';
-        gif.render();
 
-        gif.on('finished', (blob) => {
-            URL.revokeObjectURL(workerUrl);
-
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            const safeName = sanitizeFilename(repoDisplayElement.textContent);
-            link.download = `${safeName}-social-preview.gif`;
-            link.href = url;
-            link.click();
-            URL.revokeObjectURL(url);
-
-            button.innerHTML = originalMarkup;
-            button.disabled = false;
+        const blob = await new Promise((resolve, reject) => {
+            gif.on('finished', resolve);
+            gif.on('abort', () => reject(new Error('GIF rendering was aborted')));
+            gif.on('error', reject);
+            gif.render();
         });
+
+        if (blob.size >= GIF_MAX_BYTES) {
+            console.warn(`Generated GIF is ${blob.size} bytes, which exceeds ${GIF_MAX_BYTES} bytes.`);
+        }
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const safeName = sanitizeFilename(repoDisplayElement.textContent);
+        link.download = `${safeName}-social-preview.gif`;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
     } catch (error) {
-        // Restore live preview even on failure
-        animations.forEach(anim => anim.play());
         console.error(error);
         button.textContent = 'Error';
-        setTimeout(() => {
-            button.innerHTML = originalMarkup;
-            button.disabled = false;
-        }, 2000);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+    } finally {
+        resumeBlobAnimation();
+        button.innerHTML = originalMarkup;
+        button.disabled = false;
     }
 }
 
-export async function downloadPreview({ type, button, captureElement, repoDisplayElement }) {
+export async function downloadPreview({ button, captureElement, repoDisplayElement }) {
     const originalMarkup = button.innerHTML;
     button.textContent = 'Wait…';
     button.disabled = true;
@@ -84,11 +94,9 @@ export async function downloadPreview({ type, button, captureElement, repoDispla
         });
         const link = document.createElement('a');
         const safeName = sanitizeFilename(repoDisplayElement.textContent);
-        const extension = type === 'jpeg' ? 'jpg' : 'png';
-        const mimeType = type === 'jpeg' ? 'image/jpeg' : 'image/png';
 
-        link.download = `${safeName}-social-preview.${extension}`;
-        link.href = canvas.toDataURL(mimeType, 0.95);
+        link.download = `${safeName}-social-preview.jpg`;
+        link.href = canvas.toDataURL('image/jpeg', 0.95);
         link.click();
     } catch {
         button.textContent = 'Error';

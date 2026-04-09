@@ -8,8 +8,66 @@ const elements = getElements();
 let currentTheme = DEFAULT_THEME;
 let currentTemplate = 'grid';
 
+const ANIMATION_DURATION = 4000;
+const TAU = Math.PI * 2;
+let blobAnimationFrameId = null;
+let blobAnimationStart = performance.now();
+let isBlobAnimationRunning = false;
+
 function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export function setBlobsAtTime(t) {
+    const p = (t % ANIMATION_DURATION) / ANIMATION_DURATION;
+
+    const b1x = Math.sin(p * TAU) * 40;
+    const b1y = Math.cos(p * TAU * 0.7 + 0.6) * 30;
+    const b1s = 1 + Math.sin(p * TAU * 1.3 + 0.8) * 0.05;
+    const b1o = 0.2 + Math.sin(p * TAU * 1.1) * 0.04;
+    elements.blob1.style.transform = `translate(${b1x}px, ${b1y}px) scale(${b1s})`;
+    elements.blob1.style.opacity = `${b1o}`;
+
+    const b2x = Math.cos(p * TAU * 0.8 + 1.2) * 35;
+    const b2y = Math.sin(p * TAU * 1.2 + 0.3) * 25;
+    const b2s = 1 + Math.cos(p * TAU + 0.7) * 0.06;
+    const b2o = 0.17 + Math.cos(p * TAU * 0.9 + 0.5) * 0.035;
+    elements.blob2.style.transform = `translate(${b2x}px, ${b2y}px) scale(${b2s})`;
+    elements.blob2.style.opacity = `${b2o}`;
+
+    const b3x = Math.sin(p * TAU * 1.1 + 2.1) * 22;
+    const b3y = Math.cos(p * TAU * 0.9 + 0.2) * 28;
+    const b3s = 1 + Math.sin(p * TAU * 0.8 + 1.3) * 0.04;
+    const b3o = 0.12 + Math.sin(p * TAU * 1.4 + 1.9) * 0.025;
+    elements.blob3.style.transform = `translate(-50%, -50%) translate(${b3x}px, ${b3y}px) scale(${b3s})`;
+    elements.blob3.style.opacity = `${b3o}`;
+}
+
+function animateBlobs(now) {
+    setBlobsAtTime(now - blobAnimationStart);
+    blobAnimationFrameId = window.requestAnimationFrame(animateBlobs);
+}
+
+function startBlobAnimation() {
+    if (isBlobAnimationRunning) {
+        return;
+    }
+
+    blobAnimationStart = performance.now();
+    isBlobAnimationRunning = true;
+    blobAnimationFrameId = window.requestAnimationFrame(animateBlobs);
+}
+
+function pauseBlobAnimation() {
+    if (blobAnimationFrameId !== null) {
+        window.cancelAnimationFrame(blobAnimationFrameId);
+        blobAnimationFrameId = null;
+    }
+    isBlobAnimationRunning = false;
+}
+
+function resumeBlobAnimation() {
+    startBlobAnimation();
 }
 
 function applyTemplate(templateName) {
@@ -117,16 +175,7 @@ function bindEvents() {
     });
     elements.downloadJpgButton.addEventListener('click', () => {
         downloadPreview({
-            type: 'jpeg',
             button: elements.downloadJpgButton,
-            captureElement: elements.capture,
-            repoDisplayElement: elements.repoDisplay
-        });
-    });
-    elements.downloadPngButton.addEventListener('click', () => {
-        downloadPreview({
-            type: 'png',
-            button: elements.downloadPngButton,
             captureElement: elements.capture,
             repoDisplayElement: elements.repoDisplay
         });
@@ -135,7 +184,11 @@ function bindEvents() {
         downloadGif({
             button: elements.downloadGifButton,
             captureElement: elements.capture,
-            repoDisplayElement: elements.repoDisplay
+            repoDisplayElement: elements.repoDisplay,
+            animationDuration: ANIMATION_DURATION,
+            setBlobsAtTime,
+            pauseBlobAnimation,
+            resumeBlobAnimation
         });
     });
     elements.templateButtons.forEach((btn) => {
@@ -146,3 +199,4 @@ function bindEvents() {
 bindEvents();
 applyTheme(DEFAULT_THEME);
 applyTemplate('grid');
+startBlobAnimation();
