@@ -262,30 +262,6 @@ h1 span {
     pointer-events: none;
 }
 
-@keyframes waveBlob1 {
-    0%   { transform: translate(0px, 0px) scale(1); }
-    25%  { transform: translate(40px, -30px) scale(1.06); }
-    50%  { transform: translate(-25px, 40px) scale(0.95); }
-    75%  { transform: translate(30px, 25px) scale(1.04); }
-    100% { transform: translate(0px, 0px) scale(1); }
-}
-
-@keyframes waveBlob2 {
-    0%   { transform: translate(0px, 0px) scale(1); }
-    25%  { transform: translate(-35px, 30px) scale(0.94); }
-    50%  { transform: translate(45px, -20px) scale(1.07); }
-    75%  { transform: translate(-20px, -35px) scale(0.97); }
-    100% { transform: translate(0px, 0px) scale(1); }
-}
-
-@keyframes waveBlob3 {
-    0%   { transform: translate(-50%, -50%) scale(1); }
-    25%  { transform: translate(calc(-50% + 20px), calc(-50% + 35px)) scale(1.05); }
-    50%  { transform: translate(calc(-50% - 35px), calc(-50% - 20px)) scale(0.95); }
-    75%  { transform: translate(calc(-50% + 30px), calc(-50% - 30px)) scale(1.03); }
-    100% { transform: translate(-50%, -50%) scale(1); }
-}
-
 .card-bg-blob1 {
     position: absolute;
     width: 900px;
@@ -296,7 +272,6 @@ h1 span {
     filter: blur(120px);
     opacity: 0.25;
     transition: background 0.5s;
-    animation: waveBlob1 4s ease-in-out infinite;
 }
 
 .card-bg-blob2 {
@@ -309,7 +284,6 @@ h1 span {
     filter: blur(140px);
     opacity: 0.15;
     transition: background 0.5s;
-    animation: waveBlob2 4s ease-in-out infinite;
 }
 
 .card-bg-blob3 {
@@ -323,7 +297,6 @@ h1 span {
     filter: blur(100px);
     opacity: 0.1;
     transition: background 0.5s;
-    animation: waveBlob3 4s ease-in-out infinite;
 }
 
 .card-bg-grain {
