@@ -5,15 +5,20 @@ export async function downloadGif({ button, captureElement, repoDisplayElement }
     button.disabled = true;
 
     const FRAME_COUNT = 15;
-    const gif = new window.GIF({
-        width: 1280,
-        height: 640,
-        quality: 10,
-        workers: 2,
-        workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js'
-    });
 
     try {
+        const response = await fetch('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js');
+        const workerBlob = await response.blob();
+        const workerUrl = URL.createObjectURL(workerBlob);
+
+        const gif = new window.GIF({
+            width: 1280,
+            height: 640,
+            quality: 10,
+            workers: 2,
+            workerScript: workerUrl
+        });
+
         for (let i = 0; i < FRAME_COUNT; i++) {
             button.textContent = `Frame ${i + 1}/${FRAME_COUNT}…`;
             const canvas = await window.html2canvas(captureElement, {
@@ -28,6 +33,8 @@ export async function downloadGif({ button, captureElement, repoDisplayElement }
         gif.render();
 
         gif.on('finished', (blob) => {
+            URL.revokeObjectURL(workerUrl);
+
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             const safeName = sanitizeFilename(repoDisplayElement.textContent);
@@ -39,7 +46,8 @@ export async function downloadGif({ button, captureElement, repoDisplayElement }
             button.innerHTML = originalMarkup;
             button.disabled = false;
         });
-    } catch {
+    } catch (error) {
+        console.error(error);
         button.textContent = 'Error';
         setTimeout(() => {
             button.innerHTML = originalMarkup;
