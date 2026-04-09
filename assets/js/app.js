@@ -1,6 +1,6 @@
 import { DEFAULT_THEME, THEMES } from './constants.js';
 import { getElements, renderFeatures, renderLanguages, setLoading, setStatus, updateLoaderText } from './dom.js';
-import { downloadGif, downloadPreview } from './export.js';
+import { downloadPreview } from './export.js';
 import { fetchLanguages, fetchRepository } from './github.js';
 import { fmt, fmtSize, parseInput, titleCase } from './utils.js';
 
@@ -56,18 +56,6 @@ function startBlobAnimation() {
     blobAnimationStart = performance.now();
     isBlobAnimationRunning = true;
     blobAnimationFrameId = window.requestAnimationFrame(animateBlobs);
-}
-
-function pauseBlobAnimation() {
-    if (blobAnimationFrameId !== null) {
-        window.cancelAnimationFrame(blobAnimationFrameId);
-        blobAnimationFrameId = null;
-    }
-    isBlobAnimationRunning = false;
-}
-
-function resumeBlobAnimation() {
-    startBlobAnimation();
 }
 
 function applyTemplate(templateName) {
@@ -178,17 +166,6 @@ function bindEvents() {
             button: elements.downloadJpgButton,
             captureElement: elements.capture,
             repoDisplayElement: elements.repoDisplay
-        });
-    });
-    elements.downloadGifButton.addEventListener('click', () => {
-        downloadGif({
-            button: elements.downloadGifButton,
-            captureElement: elements.capture,
-            repoDisplayElement: elements.repoDisplay,
-            animationDuration: ANIMATION_DURATION,
-            setBlobsAtTime,
-            pauseBlobAnimation,
-            resumeBlobAnimation
         });
     });
     elements.templateButtons.forEach((btn) => {
