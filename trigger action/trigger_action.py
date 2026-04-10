@@ -88,13 +88,9 @@ if event_name == "push":
     commit_sha = os.environ.get("COMMIT_SHA")
     commit = repo.get_commit(commit_sha)
 
-    if len(commit.parents) > 1:
-        exit(0)
-    if not commit.author:
-        exit(0)
-
-    author_login = commit.author.login.strip().lower()
-    if author_login not in allowed_users:
+    actor_login = os.environ.get("GITHUB_ACTOR", "").strip().lower()
+    if actor_login not in allowed_users:
+        print(f"Action performed by {actor_login}, not in allowed list. Skipping.")
         exit(0)
 
     pr_match = re.search(r'\(#(\d+)\)', commit.commit.message)
@@ -475,7 +471,8 @@ if affected_file:
 else:
     issue_body = result["issue_body"].replace("PUT_PERMALINK_HERE", "_No specific file identified_")
 
-footer = f"\n\n---\n*Generated from {dedup_key} | Auto-detected role: `{role_key}`*"
+actor_name = os.environ.get("GITHUB_ACTOR", "unknown")
+footer = f"\n\n---\n*Generated from {dedup_key} | Auto-detected role: `{role_key}` | Processed by actor: {actor_name}*"
 
 severity = result.get("severity", "medium").lower()
 severity_label_map = {
