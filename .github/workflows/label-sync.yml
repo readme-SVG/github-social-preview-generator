@@ -8,6 +8,8 @@ on:
       - '.github/labels.yml'
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   sync:
     runs-on: ubuntu-latest
