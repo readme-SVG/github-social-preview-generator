@@ -3,8 +3,6 @@ name: SAST CodeQL Scan
 on:
   pull_request:
   workflow_dispatch:
-  schedule:
-    - cron: '17 4 * * 1'
 
 permissions: read-all
 
