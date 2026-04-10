@@ -14,8 +14,6 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout
@@ -28,7 +26,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies and generate lockfile
+      - name: Install dependencies
         run: |
           if [ ! -f package.json ]; then
             echo "No package.json found. Skipping npm install."
@@ -40,19 +38,6 @@ jobs:
           else
             echo "package-lock.json NOT found. Generating it (npm install)..."
             npm install --no-audit --no-fund
-          fi
-
-      - name: Commit and push package-lock.json if newly created
-        run: |
-          if [[ -n $(git status -s package-lock.json) ]]; then
-            echo "Saving the new package-lock.json to the repository..."
-            git config --local user.email "github-actions[bot]@users.noreply.github.com"
-            git config --local user.name "github-actions[bot]"
-            git add package-lock.json
-            git commit -m "chore: auto-generate package-lock.json [skip ci]"
-            git push
-          else
-            echo "package-lock.json has not changed. No commit required."
           fi
 
       - name: Run project lint script when available

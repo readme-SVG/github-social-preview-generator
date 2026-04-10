@@ -4,6 +4,8 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
 
+permissions: read-all
+
 concurrency:
   group: dependabot-merge-${{ github.event.pull_request.number }}
   cancel-in-progress: false
