@@ -33,9 +33,3 @@ jobs:
           results_file: scorecard-results.sarif
           results_format: sarif
           publish_results: true
-
-      - name: Upload SARIF results to GitHub
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: scorecard-results.sarif
-          category: scorecard

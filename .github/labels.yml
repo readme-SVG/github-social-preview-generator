@@ -1,19 +1,31 @@
-# Severity labels — used by trigger_action.py
+# Severity labels — used by trigger_action.py (7-level scale)
 - name: "severity: critical"
   color: "B60205"
-  description: "Requires immediate attention — security or data loss risk"
+  description: "Production-breaking, security vulnerabilities, data loss risk"
 
 - name: "severity: high"
   color: "D93F0B"
-  description: "Significant issue that should be resolved soon"
+  description: "Core logic changes, API modifications, breaking changes"
+
+- name: "severity: elevated"
+  color: "E36209"
+  description: "New features or modules, large refactors, external integrations"
 
 - name: "severity: medium"
   color: "E4E669"
-  description: "Moderate issue with a known workaround"
+  description: "New helpers, CI/CD changes, config changes, dependency updates"
+
+- name: "severity: moderate"
+  color: "B4D455"
+  description: "Minor feature additions, validation improvements, small behavioral changes"
 
 - name: "severity: low"
   color: "0E8A16"
-  description: "Minor issue or cosmetic problem"
+  description: "Documentation updates, cosmetic changes, formatting fixes"
+
+- name: "severity: informational"
+  color: "C5DEF5"
+  description: "Trivial changes — typos, whitespace, comment rewording"
 
 # Type labels — standard issue/PR classification
 - name: "bug"
