@@ -21,7 +21,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-3e80ed?style=for-the-badge&logo=github&logoColor=white)](https://github.com/OstinUA)
 [![Open Source](https://img.shields.io/badge/Open_Source-Yes-brightgreen?style=for-the-badge&logo=open-source&logoColor=white)](https://github.com/OstinUA)
 [![Views](https://img.shields.io/badge/Profile_Views-%31&#56;%33-blueviolet?style=for-the-badge)](https://github.com/OstinUA)
-![OstinUA](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=2&)
+[![OstinUA](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=2&)](https://github.com/OstinUA)
 
 
 Hello! Thank you for your interest in contributing to this project. I am always open to any help, whether it's fixing bugs, adding new features, improving documentation, or just sharing fresh ideas. 
@@ -57,4 +57,4 @@ The workflow here is as straightforward as possible:
 I try to review all Issues and Pull Requests as quickly as possible. If I haven't replied in a while, don't hesitate to ping me in the comments.
 
 The main rule is mutual respect. Welcome, and thank you for your contribution!
-![OstinUA](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=2&)
+[![OstinUA](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=2&)](https://github.com/OstinUA)
