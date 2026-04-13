@@ -90,7 +90,9 @@ function applyCardTheme(themeName) {
     }
 
     elements.cardThemeButtons.forEach((btn) => {
-        btn.classList.toggle('active', btn.dataset.cardTheme === themeName);
+        const isActive = btn.dataset.cardTheme === themeName;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
     });
 }
 
