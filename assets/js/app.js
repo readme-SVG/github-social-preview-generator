@@ -7,6 +7,7 @@ import { fmt, fmtSize, parseInput, titleCase } from './utils.js';
 const elements = getElements();
 let currentTheme = DEFAULT_THEME;
 let currentTemplate = 'grid';
+let currentPlatform = 'mobile';
 let customThemeHex = '#58a6ff';
 
 const ANIMATION_DURATION = 4000;
@@ -66,8 +67,26 @@ function applyTemplate(templateName) {
     if (templateName !== 'grid') {
         card.classList.add(`template-${templateName}`);
     }
+    if (currentPlatform === 'desktop') {
+        card.classList.add('platform-desktop');
+    }
     elements.templateButtons.forEach((btn) => {
         btn.classList.toggle('active', btn.dataset.template === templateName);
+    });
+}
+
+function applyPlatform(platformName) {
+    currentPlatform = platformName;
+    const card = elements.capture;
+
+    if (platformName === 'desktop') {
+        card.classList.add('platform-desktop');
+    } else {
+        card.classList.remove('platform-desktop');
+    }
+
+    elements.platformButtons.forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.platform === platformName);
     });
 }
 
@@ -244,9 +263,13 @@ function bindEvents() {
     elements.templateButtons.forEach((btn) => {
         btn.addEventListener('click', () => applyTemplate(btn.dataset.template));
     });
+    elements.platformButtons.forEach((btn) => {
+        btn.addEventListener('click', () => applyPlatform(btn.dataset.platform));
+    });
 }
 
 bindEvents();
 applyTheme(DEFAULT_THEME);
 applyTemplate('grid');
+applyPlatform('mobile');
 startBlobAnimation();

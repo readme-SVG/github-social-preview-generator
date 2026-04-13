@@ -702,6 +702,62 @@ h1 span {
     color: #fff;
 }
 
+/* ========================= */
+/* Platform preview mode     */
+/* ========================= */
+.platform-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    align-items: center;
+}
+
+.platform-label {
+    font-size: 16px;
+    color: var(--fg3);
+    margin-right: 4px;
+    font-weight: 500;
+}
+
+.platform-desktop .card-header {
+    height: 70px;
+}
+
+.platform-desktop::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1280px;
+    height: 77px;
+    background: #0d1117;
+    z-index: 50;
+    pointer-events: none;
+}
+
+.platform-desktop::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 1280px;
+    height: 77px;
+    background: #0d1117;
+    z-index: 50;
+    pointer-events: none;
+}
+
+.platform-spacer {
+    width: 1280px;
+    height: 77px;
+    background: #0d1117;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 20;
+}
+
 /* ===================== */
 /* Template: Timeline    */
 /* ===================== */
