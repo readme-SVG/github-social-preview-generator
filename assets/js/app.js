@@ -8,6 +8,7 @@ const elements = getElements();
 let currentTheme = DEFAULT_THEME;
 let currentTemplate = 'grid';
 let currentPlatform = 'mobile';
+let currentCardTheme = 'dark';
 let customThemeHex = '#58a6ff';
 
 const ANIMATION_DURATION = 4000;
@@ -70,8 +71,28 @@ function applyTemplate(templateName) {
     if (currentPlatform === 'desktop') {
         card.classList.add('platform-desktop');
     }
+    if (currentCardTheme === 'light') {
+        card.classList.add('card-theme-light');
+    }
     elements.templateButtons.forEach((btn) => {
         btn.classList.toggle('active', btn.dataset.template === templateName);
+    });
+}
+
+function applyCardTheme(themeName) {
+    currentCardTheme = themeName;
+    const card = elements.capture;
+
+    if (themeName === 'light') {
+        card.classList.add('card-theme-light');
+    } else {
+        card.classList.remove('card-theme-light');
+    }
+
+    elements.cardThemeButtons.forEach((btn) => {
+        const isActive = btn.dataset.cardTheme === themeName;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
     });
 }
 
@@ -279,12 +300,16 @@ function bindEvents() {
     elements.platformButtons.forEach((btn) => {
         btn.addEventListener('click', () => applyPlatform(btn.dataset.platform));
     });
+    elements.cardThemeButtons.forEach((btn) => {
+        btn.addEventListener('click', () => applyCardTheme(btn.dataset.cardTheme));
+    });
 }
 
 bindEvents();
 applyTheme(DEFAULT_THEME);
 applyTemplate('grid');
 applyPlatform('mobile');
+applyCardTheme('dark');
 startBlobAnimation();
 
 // Custom color picker initialization
