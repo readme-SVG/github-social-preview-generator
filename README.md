@@ -13,7 +13,41 @@ Create production-ready `1280×640` Open Graph preview images from public GitHub
 > [!NOTE]
 > This repository is a static front-end application with a minimal Python server for local development only.
 
-![Preview](https://github.com/readme-SVG/github-social-preview-generator/raw/main/Image/readmeING_github-social-preview-generator.png)
+[![Examples](https://github.com/readme-SVG/github-social-preview-generator/raw/main/Image/readmeING_github-social-preview-generator.png)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
+
+<details>
+  <summary>Examples of Generated Previews <strong>← Open</strong></summary>
+  <br>
+
+[![Examples-1](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_Contribution-Painter-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
+
+[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
+
+[![Examples-2](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_Issues-heroes-badge-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
+
+[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
+
+[![Examples-3](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_ascii-text-generator-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
+
+[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
+
+[![Examples-4](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_github-profile-readme-generator-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
+
+[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
+
+[![Examples-5](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_readme-PR-contributors-rating-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
+
+[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
+
+[![Examples-6](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_readme-SVG-profile-bengo-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
+
+[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
+
+[![Examples-7](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_readme-SVG-wave-divider-generator-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
+
+[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
+
+</details>
 
 ## Table of Contents
 
