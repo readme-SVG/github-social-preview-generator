@@ -79,8 +79,20 @@ function applyPlatform(platformName) {
     currentPlatform = platformName;
     const card = elements.capture;
 
+    // Remove existing spacers first (clean slate)
+    card.querySelectorAll('.platform-spacer').forEach((el) => el.remove());
+
     if (platformName === 'desktop') {
         card.classList.add('platform-desktop');
+
+        const topSpacer = document.createElement('div');
+        topSpacer.className = 'platform-spacer';
+
+        const bottomSpacer = document.createElement('div');
+        bottomSpacer.className = 'platform-spacer';
+
+        card.insertBefore(topSpacer, card.firstChild);
+        card.appendChild(bottomSpacer);
     } else {
         card.classList.remove('platform-desktop');
     }
