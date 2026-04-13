@@ -34,7 +34,24 @@
         <div class="theme-dot" data-theme="orange"></div>
         <div class="theme-dot" data-theme="red"></div>
         <div class="theme-dot" data-theme="cyan"></div>
-        <input type="color" id="custom-color-picker" value="#58a6ff" aria-label="Pick custom theme color">
+        <div class="color-picker-wrap" id="custom-picker-wrap">
+            <div class="theme-dot color-picker-trigger" id="custom-picker-trigger" title="Custom color"></div>
+            <input type="color" id="custom-color-picker" value="#58a6ff" aria-label="Pick custom theme color">
+            <div class="color-picker-panel" id="custom-picker-panel">
+                <div class="cp-preview-row">
+                    <div class="cp-swatch" id="cp-swatch"></div>
+                    <input class="cp-hex-input" id="cp-hex" type="text" maxlength="7" value="#58a6ff" spellcheck="false">
+                </div>
+                <div class="cp-sliders">
+                    <label class="cp-label">Hue</label>
+                    <input class="cp-range cp-hue" id="cp-hue" type="range" min="0" max="360" value="213">
+                    <label class="cp-label">Saturation</label>
+                    <input class="cp-range cp-sat" id="cp-sat" type="range" min="0" max="100" value="100">
+                    <label class="cp-label">Lightness</label>
+                    <input class="cp-range cp-lit" id="cp-lit" type="range" min="10" max="90" value="61">
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="template-row">
