@@ -13,7 +13,7 @@ Create production-ready `1280×640` Open Graph preview images from public GitHub
 > [!NOTE]
 > This repository is a static front-end application with a minimal Python server for local development only.
 
-[![Examples](https://github.com/readme-SVG/github-social-preview-generator/raw/main/Image/readmeING_github-social-preview-generator.png)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
+[![Examples](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Image/readmeING_github-social-preview-generator.png)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
 
 <details>
   <summary>Examples of Generated Previews <strong>← Open</strong></summary>
