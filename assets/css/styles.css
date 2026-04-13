@@ -1105,133 +1105,133 @@ h1 span {
 }
 
 /* Timeline in desktop */
-.platform-desktop .template-timeline .card-body {
+.platform-desktop.template-timeline .card-body {
     padding: 16px 60px;
 }
 
-.platform-desktop .template-timeline .main-repo-title {
+.platform-desktop.template-timeline .main-repo-title {
     font-size: 34px;
     margin-bottom: 6px;
 }
 
-.platform-desktop .template-timeline .main-repo-desc {
+.platform-desktop.template-timeline .main-repo-desc {
     font-size: 14px;
     margin-bottom: 14px;
 }
 
-.platform-desktop .template-timeline .bento-box {
+.platform-desktop.template-timeline .bento-box {
     padding: 6px 0;
 }
 
-.platform-desktop .template-timeline .bento-box-title {
+.platform-desktop.template-timeline .bento-box-title {
     font-size: 10px;
 }
 
-.platform-desktop .template-timeline .bento-box-text {
+.platform-desktop.template-timeline .bento-box-text {
     font-size: 12px;
 }
 
 /* Spotlight in desktop */
-.platform-desktop .template-spotlight .card-body {
+.platform-desktop.template-spotlight .card-body {
     padding: 20px 60px;
 }
 
-.platform-desktop .template-spotlight .main-repo-title {
+.platform-desktop.template-spotlight .main-repo-title {
     font-size: 56px;
     margin-bottom: 12px;
 }
 
-.platform-desktop .template-spotlight .main-repo-desc {
+.platform-desktop.template-spotlight .main-repo-desc {
     font-size: 20px;
 }
 
 /* Minimal in desktop */
-.platform-desktop .template-minimal .card-body {
+.platform-desktop.template-minimal .card-body {
     padding: 20px 60px;
 }
 
-.platform-desktop .template-minimal .main-repo-title {
+.platform-desktop.template-minimal .main-repo-title {
     font-size: 42px;
     margin-bottom: 10px;
 }
 
-.platform-desktop .template-minimal .main-repo-desc {
+.platform-desktop.template-minimal .main-repo-desc {
     font-size: 18px;
     margin-bottom: 20px;
 }
 
-.platform-desktop .template-minimal .bento-box-text {
+.platform-desktop.template-minimal .bento-box-text {
     font-size: 13px;
 }
 
 /* Compact in desktop — already works, minor padding adjustment */
-.platform-desktop .template-compact .card-body {
+.platform-desktop.template-compact .card-body {
     padding: 16px 44px;
 }
 
-.platform-desktop .template-compact .main-repo-title {
+.platform-desktop.template-compact .main-repo-title {
     font-size: 36px;
 }
 
-.platform-desktop .template-compact .main-repo-desc {
+.platform-desktop.template-compact .main-repo-desc {
     font-size: 14px;
 }
 
-.platform-desktop .template-compact .bento-box {
+.platform-desktop.template-compact .bento-box {
     padding: 10px 14px;
 }
 
-.platform-desktop .template-compact .bento-box-text {
+.platform-desktop.template-compact .bento-box-text {
     font-size: 12px;
 }
 
 /* Terminal in desktop */
-.platform-desktop .template-terminal .card-body {
+.platform-desktop.template-terminal .card-body {
     padding: 16px 36px;
 }
 
-.platform-desktop .template-terminal .main-repo-title {
+.platform-desktop.template-terminal .main-repo-title {
     font-size: 26px;
     margin-bottom: 8px;
 }
 
-.platform-desktop .template-terminal .main-repo-desc {
+.platform-desktop.template-terminal .main-repo-desc {
     font-size: 12px;
     margin-bottom: 10px;
 }
 
-.platform-desktop .template-terminal .bento-box-title {
+.platform-desktop.template-terminal .bento-box-title {
     font-size: 10px;
 }
 
-.platform-desktop .template-terminal .bento-box-text {
+.platform-desktop.template-terminal .bento-box-text {
     font-size: 11px;
 }
 
-.platform-desktop .template-terminal .bento-container {
+.platform-desktop.template-terminal .bento-container {
     padding: 24px 18px 16px;
 }
 
 /* Masonry in desktop */
-.platform-desktop .template-masonry .card-body {
+.platform-desktop.template-masonry .card-body {
     padding: 14px 48px;
 }
 
-.platform-desktop .template-masonry .main-repo-title {
+.platform-desktop.template-masonry .main-repo-title {
     font-size: 34px;
     margin-bottom: 6px;
 }
 
-.platform-desktop .template-masonry .main-repo-desc {
+.platform-desktop.template-masonry .main-repo-desc {
     font-size: 14px;
     margin-bottom: 12px;
 }
 
-.platform-desktop .template-masonry .bento-box {
+.platform-desktop.template-masonry .bento-box {
     padding: 12px 12px 10px;
 }
 
-.platform-desktop .template-masonry .bento-grid {
+.platform-desktop.template-masonry .bento-grid {
     grid-auto-rows: minmax(55px, auto);
     gap: 10px;
 }
