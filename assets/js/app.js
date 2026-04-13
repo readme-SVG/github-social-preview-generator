@@ -7,6 +7,7 @@ import { fmt, fmtSize, parseInput, titleCase } from './utils.js';
 const elements = getElements();
 let currentTheme = DEFAULT_THEME;
 let currentTemplate = 'grid';
+let customThemeHex = '#58a6ff';
 
 const ANIMATION_DURATION = 4000;
 const TAU = Math.PI * 2;
@@ -71,6 +72,11 @@ function applyTemplate(templateName) {
 }
 
 function applyTheme(themeName) {
+    if (themeName === 'custom') {
+        applyCustomTheme(customThemeHex);
+        return;
+    }
+
     currentTheme = themeName;
     const theme = THEMES[themeName];
 
@@ -82,6 +88,67 @@ function applyTheme(themeName) {
     elements.themeDots.forEach((dot) => {
         dot.classList.toggle('active', dot.dataset.theme === themeName);
     });
+
+    const customColorPicker = document.getElementById('custom-color-picker');
+    if (customColorPicker) {
+        customColorPicker.classList.remove('active');
+    }
+}
+
+function hexToRgb(hex) {
+    const clean = hex.replace('#', '');
+    const fullHex = clean.length === 3
+        ? clean.split('').map((char) => char + char).join('')
+        : clean;
+    const value = Number.parseInt(fullHex, 16);
+    return {
+        r: (value >> 16) & 255,
+        g: (value >> 8) & 255,
+        b: value & 255
+    };
+}
+
+function rgbToHex(r, g, b) {
+    return `#${[r, g, b]
+        .map((channel) => Math.max(0, Math.min(255, Math.round(channel))).toString(16).padStart(2, '0'))
+        .join('')}`;
+}
+
+function mixWith(colorHex, targetHex, amount) {
+    const color = hexToRgb(colorHex);
+    const target = hexToRgb(targetHex);
+    const mix = (source, destination) => source + (destination - source) * amount;
+    return rgbToHex(mix(color.r, target.r), mix(color.g, target.g), mix(color.b, target.b));
+}
+
+function generateCustomTheme(baseHex) {
+    return {
+        b1: mixWith(baseHex, '#0d1117', 0.4),
+        b2: mixWith(baseHex, '#0d1117', 0.58),
+        b3: mixWith(baseHex, '#ffffff', 0.08),
+        tc: mixWith(baseHex, '#ffffff', 0.1)
+    };
+}
+
+function applyCustomTheme(hex) {
+    customThemeHex = hex;
+    currentTheme = 'custom';
+    const theme = generateCustomTheme(hex);
+
+    elements.blob1.style.background = `radial-gradient(ellipse, ${theme.b1}, transparent 70%)`;
+    elements.blob2.style.background = `radial-gradient(ellipse, ${theme.b2}, transparent 70%)`;
+    elements.blob3.style.background = `radial-gradient(ellipse, ${theme.b3}, transparent 70%)`;
+    document.documentElement.style.setProperty('--tc', theme.tc);
+
+    elements.themeDots.forEach((dot) => {
+        dot.classList.remove('active');
+    });
+
+    const customColorPicker = document.getElementById('custom-color-picker');
+    if (customColorPicker) {
+        customColorPicker.classList.add('active');
+        customColorPicker.value = hex;
+    }
 }
 
 function updateRepositoryMetadata(repository, topLanguages) {
@@ -161,6 +228,12 @@ function bindEvents() {
     elements.themeDots.forEach((dot) => {
         dot.addEventListener('click', () => applyTheme(dot.dataset.theme));
     });
+    const customColorPicker = document.getElementById('custom-color-picker');
+    if (customColorPicker) {
+        customColorPicker.addEventListener('input', (event) => {
+            applyCustomTheme(event.target.value);
+        });
+    }
     elements.downloadJpgButton.addEventListener('click', () => {
         downloadPreview({
             button: elements.downloadJpgButton,

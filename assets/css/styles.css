@@ -25,6 +25,39 @@ body {
     flex-direction: column;
     align-items: center;
     padding: 48px 24px 80px;
+    position: relative;
+}
+
+.repo-link-btn {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--fg2);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 999px;
+    padding: 8px 12px;
+    transition: color 0.15s, border-color 0.15s, transform 0.15s, background 0.15s;
+}
+
+.repo-link-btn svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+.repo-link-btn:hover {
+    color: var(--fg);
+    border-color: #3d4757;
+    background: var(--surface2);
+    transform: translateY(-1px);
 }
 
 .top-label {
@@ -152,6 +185,42 @@ h1 span {
 }
 
 .theme-dot.active {
+    border-color: #fff;
+}
+
+#custom-color-picker {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    padding: 0;
+    overflow: hidden;
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    transition: border-color 0.15s, transform 0.15s;
+}
+
+#custom-color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+#custom-color-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+#custom-color-picker::-moz-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+#custom-color-picker:hover {
+    transform: scale(1.15);
+}
+
+#custom-color-picker.active {
     border-color: #fff;
 }
 
@@ -838,4 +907,143 @@ h1 span {
 
 .template-compact .bento-box-text {
     font-size: 14px;
+}
+
+.template-terminal .card-body {
+    padding: 30px 56px;
+}
+
+.template-terminal .bento-container {
+    align-items: flex-start;
+    text-align: left;
+    max-width: 100%;
+    background: rgba(6, 10, 15, 0.7);
+    border: 1px solid rgba(88, 166, 255, 0.2);
+    border-radius: 16px;
+    padding: 24px 28px 26px;
+    box-shadow: inset 0 0 0 1px rgba(88, 166, 255, 0.08);
+}
+
+.template-terminal .main-repo-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 42px;
+    color: #dcf2ff;
+    margin-bottom: 10px;
+}
+
+.template-terminal .main-repo-title::before {
+    content: '$ git clone ';
+    color: var(--tc, #58a6ff);
+}
+
+.template-terminal .main-repo-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: rgba(203, 228, 245, 0.8);
+    margin-bottom: 18px;
+    max-width: 100%;
+}
+
+.template-terminal .bento-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.template-terminal .bento-box {
+    background: rgba(1, 4, 9, 0.5);
+    border: 1px solid rgba(88, 166, 255, 0.12);
+    border-radius: 10px;
+    padding: 12px 14px;
+}
+
+.template-terminal .bento-box-title {
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+
+.template-terminal .bento-box-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: rgba(227, 243, 255, 0.78);
+}
+
+.template-split .card-body {
+    padding: 26px 46px;
+}
+
+.template-split .bento-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    align-items: stretch;
+    text-align: left;
+    gap: 24px;
+    max-width: 100%;
+}
+
+.template-split .main-repo-title {
+    font-size: 58px;
+    margin-bottom: 14px;
+}
+
+.template-split .main-repo-desc {
+    font-size: 19px;
+    line-height: 1.55;
+    margin-bottom: 0;
+    max-width: 100%;
+}
+
+.template-split .bento-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    align-content: center;
+}
+
+.template-split .bento-box {
+    min-height: 115px;
+    display: flex;
+    justify-content: center;
+}
+
+.template-masonry .card-body {
+    padding: 30px 66px;
+}
+
+.template-masonry .bento-container {
+    align-items: flex-start;
+    text-align: left;
+    max-width: 100%;
+}
+
+.template-masonry .main-repo-title {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.template-masonry .main-repo-desc {
+    font-size: 18px;
+    margin-bottom: 20px;
+    max-width: 880px;
+}
+
+.template-masonry .bento-grid {
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: minmax(75px, auto);
+    gap: 14px;
+}
+
+.template-masonry .bento-box {
+    padding: 18px 18px 14px;
+}
+
+.template-masonry .bento-box:nth-child(1) {
+    grid-column: span 7;
+    grid-row: span 2;
+}
+
+.template-masonry .bento-box:nth-child(2) {
+    grid-column: span 5;
+}
+
+.template-masonry .bento-box:nth-child(3) {
+    grid-column: span 5;
 }
