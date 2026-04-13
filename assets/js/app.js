@@ -286,3 +286,66 @@ applyTheme(DEFAULT_THEME);
 applyTemplate('grid');
 applyPlatform('mobile');
 startBlobAnimation();
+
+// Custom color picker initialization
+(function initCustomPicker() {
+    const wrap = document.getElementById('custom-picker-wrap');
+    const trigger = document.getElementById('custom-picker-trigger');
+    const panel = document.getElementById('custom-picker-panel');
+    const swatch = document.getElementById('cp-swatch');
+    const hexInput = document.getElementById('cp-hex');
+    const hueSlider = document.getElementById('cp-hue');
+    const satSlider = document.getElementById('cp-sat');
+    const litSlider = document.getElementById('cp-lit');
+
+    if (!wrap) return;
+
+    function hslToHex(h, s, l) {
+        s /= 100; l /= 100;
+        const a = s * Math.min(l, 1 - l);
+        const f = n => {
+            const k = (n + h / 30) % 12;
+            return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        };
+        return '#' + [f(0), f(8), f(4)].map(x =>
+            Math.round(x * 255).toString(16).padStart(2, '0')
+        ).join('');
+    }
+
+    function updateFromSliders() {
+        const h = +hueSlider.value, s = +satSlider.value, l = +litSlider.value;
+        const hex = hslToHex(h, s, l);
+        swatch.style.background = hex;
+        hexInput.value = hex;
+        trigger.style.background = hex;
+        trigger.classList.add('active');
+        satSlider.style.background = `linear-gradient(to right, hsl(${h},0%,${l}%), hsl(${h},100%,${l}%))`;
+        litSlider.style.background = `linear-gradient(to right, hsl(${h},${s}%,10%), hsl(${h},${s}%,50%), hsl(${h},${s}%,90%))`;
+        applyCustomTheme(hex);
+    }
+
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panel.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!wrap.contains(e.target)) panel.classList.remove('open');
+    });
+
+    hueSlider.addEventListener('input', updateFromSliders);
+    satSlider.addEventListener('input', updateFromSliders);
+    litSlider.addEventListener('input', updateFromSliders);
+
+    hexInput.addEventListener('input', (e) => {
+        const val = e.target.value;
+        if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+            swatch.style.background = val;
+            trigger.style.background = val;
+            trigger.classList.add('active');
+            applyCustomTheme(val);
+        }
+    });
+
+    updateFromSliders();
+})();
