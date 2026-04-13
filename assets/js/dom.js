@@ -24,7 +24,8 @@ export function getElements() {
         blob2: document.getElementById('blob2'),
         blob3: document.getElementById('blob3'),
         themeDots: Array.from(document.querySelectorAll('.theme-dot')),
-        templateButtons: Array.from(document.querySelectorAll('.template-btn'))
+        templateButtons: Array.from(document.querySelectorAll('[data-template]')),
+        platformButtons: Array.from(document.querySelectorAll('[data-platform]'))
     };
 }
 
