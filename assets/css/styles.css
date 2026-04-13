@@ -813,6 +813,23 @@ h1 span {
     font-weight: 500;
 }
 
+/* ========================= */
+/* Card appearance toggle    */
+/* ========================= */
+.card-theme-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    align-items: center;
+}
+
+.card-theme-label {
+    font-size: 16px;
+    color: var(--fg3);
+    margin-right: 4px;
+    font-weight: 500;
+}
+
 .platform-desktop .card-header {
     height: 70px;
 }
@@ -1328,4 +1345,94 @@ h1 span {
 .platform-desktop.template-masonry .bento-grid {
     grid-auto-rows: minmax(55px, auto);
     gap: 10px;
+}
+
+/* ========================= */
+/* Light card theme          */
+/* ========================= */
+.card-theme-light {
+    background: #ffffff;
+}
+
+.card-theme-light .card-header {
+    background: #f6f8fa;
+    border-bottom-color: #d0d7de;
+}
+
+.card-theme-light .gh-logo {
+    fill: #24292f;
+}
+
+.card-theme-light .gh-path {
+    background: #ffffff;
+    border-color: #d0d7de;
+}
+
+.card-theme-light .gh-path-text {
+    color: #57606a;
+}
+
+.card-theme-light .gh-path-slash {
+    border-color: #d0d7de;
+    color: #57606a;
+}
+
+.card-theme-light .hdr-nav span {
+    color: #24292f;
+}
+
+.card-theme-light .hdr-btn {
+    background: #f6f8fa;
+    border-color: #d0d7de;
+    color: #24292f;
+}
+
+.card-theme-light .hdr-btn.cnt {
+    background: #ffffff;
+    color: #24292f;
+}
+
+.card-theme-light .hdr-btn-icon {
+    fill: #57606a;
+}
+
+.card-theme-light .card-footer {
+    background: rgba(246, 248, 250, 0.9);
+    border-top-color: #d0d7de;
+}
+
+.card-theme-light .foot-item {
+    color: #57606a;
+}
+
+.card-theme-light .foot-icon {
+    fill: #57606a;
+}
+
+.card-theme-light .main-repo-title {
+    color: #1f2328;
+}
+
+.card-theme-light .main-repo-desc {
+    color: rgba(31, 35, 40, 0.7);
+}
+
+.card-theme-light .bento-box {
+    background: rgba(31, 35, 40, 0.04);
+    border-color: rgba(31, 35, 40, 0.12);
+}
+
+.card-theme-light .bento-box-text {
+    color: #1f2328;
+}
+
+/* Terminal template in light mode — keep dark terminal window */
+.card-theme-light .template-terminal .card-body {
+    background: transparent;
+}
+
+.card-theme-light .template-terminal .bento-container {
+    background: #0d1117;
+    border-color: #30363d;
+    color: var(--tc, #3fb950);
 }
