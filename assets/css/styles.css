@@ -1437,9 +1437,9 @@ h1 span {
     color: var(--tc, #3fb950);
 }
 
-.card-theme-light .template-spotlight .main-repo-title {
-    background: linear-gradient(135deg, #1f2328 0%, var(--tc, #58a6ff) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+.card.card-theme-light .template-spotlight .main-repo-title {
+    background: linear-gradient(135deg, #1f2328 0%, var(--tc, #58a6ff) 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
 }
