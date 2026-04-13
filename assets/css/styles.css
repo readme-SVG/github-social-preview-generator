@@ -192,38 +192,30 @@ h1 span {
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    border: 2px solid var(--border);
-    cursor: pointer;
     padding: 0;
+    border: none;
     overflow: hidden;
     appearance: none;
     -webkit-appearance: none;
-    background: conic-gradient(from 0deg, #ff5f56, #ffbd2e, #27c93f, #00c7be, #1f8fff, #7f5af0, #ff5f56);
-    background-origin: border-box;
-    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+    cursor: pointer;
+    background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+    transition: transform 0.15s;
 }
 
 #custom-color-picker::-webkit-color-swatch-wrapper {
     padding: 0;
-    border: 0;
-    border-radius: 50%;
-    width: 100%;
-    height: 100%;
 }
 
 #custom-color-picker::-webkit-color-swatch {
     border: none;
     border-radius: 50%;
-    width: 100%;
-    height: 100%;
+    background: transparent;
 }
 
 #custom-color-picker::-moz-color-swatch {
     border: none;
     border-radius: 50%;
-    width: 100%;
-    height: 100%;
+    background: transparent;
 }
 
 #custom-color-picker:hover {
@@ -920,36 +912,53 @@ h1 span {
 }
 
 .template-terminal .card-body {
-    padding: 30px 56px;
+    padding: 30px 52px;
 }
 
 .template-terminal .bento-container {
     align-items: flex-start;
     text-align: left;
     max-width: 100%;
-    background: rgba(6, 10, 15, 0.7);
-    border: 1px solid rgba(88, 166, 255, 0.2);
-    border-radius: 16px;
-    padding: 24px 28px 26px;
-    box-shadow: inset 0 0 0 1px rgba(88, 166, 255, 0.08);
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 38px 24px 24px;
+    color: var(--tc, #3fb950);
+    position: relative;
+}
+
+.template-terminal .bento-container::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ff5f56;
+    box-shadow: 16px 0 0 #ffbd2e, 32px 0 0 #27c93f;
+}
+
+.template-terminal .bento-container,
+.template-terminal .bento-container * {
+    font-family: 'JetBrains Mono', monospace;
 }
 
 .template-terminal .main-repo-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 42px;
-    color: #dcf2ff;
-    margin-bottom: 10px;
+    font-size: 36px;
+    color: inherit;
+    margin-bottom: 12px;
 }
 
 .template-terminal .main-repo-title::before {
-    content: '$ git clone ';
-    color: var(--tc, #58a6ff);
+    content: "guest@github:~$ ";
+    color: rgba(99, 110, 123, 0.95);
 }
 
 .template-terminal .main-repo-desc {
-    font-family: 'JetBrains Mono', monospace;
     font-size: 16px;
-    color: rgba(203, 228, 245, 0.8);
+    color: inherit;
+    opacity: 0.82;
     margin-bottom: 18px;
     max-width: 100%;
 }
@@ -960,70 +969,23 @@ h1 span {
 }
 
 .template-terminal .bento-box {
-    background: rgba(1, 4, 9, 0.5);
-    border: 1px solid rgba(88, 166, 255, 0.12);
-    border-radius: 10px;
-    padding: 12px 14px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 4px 0;
 }
 
 .template-terminal .bento-box-title {
     font-size: 11px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
+    opacity: 0.76;
 }
 
 .template-terminal .bento-box-text {
-    font-family: 'JetBrains Mono', monospace;
     font-size: 14px;
-    color: rgba(227, 243, 255, 0.78);
-}
-
-.template-split .card-body {
-    padding: 26px 46px;
-}
-
-.template-split .bento-container {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    align-items: stretch;
-    text-align: left;
-    gap: 18px;
-    max-width: 100%;
-}
-
-.template-split .bento-container > :first-child {
-    flex: 1.2;
-    min-width: 0;
-}
-
-.template-split .bento-container > .bento-grid {
-    flex: 0.9;
-    min-width: 0;
-}
-
-.template-split .main-repo-title {
-    font-size: 58px;
-    margin-bottom: 14px;
-}
-
-.template-split .main-repo-desc {
-    font-size: 19px;
-    line-height: 1.55;
-    margin-bottom: 0;
-    max-width: 100%;
-}
-
-.template-split .bento-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    align-content: center;
-}
-
-.template-split .bento-box {
-    min-height: 92px;
-    padding: 14px 16px;
-    display: flex;
-    justify-content: center;
+    color: inherit;
+    opacity: 0.9;
 }
 
 .template-masonry .card-body {
