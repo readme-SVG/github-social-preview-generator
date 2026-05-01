@@ -5,12 +5,15 @@ import { sanitizeFilename } from './utils.js';
  *  1. background-clip: text + -webkit-text-fill-color: transparent
  *     → renders the gradient as a solid rectangle behind invisible text.
  *     Used by .template-spotlight .main-repo-title.
- *  2. backdrop-filter is silently dropped → can leave footer/bento boxes
- *     looking inconsistent vs. the live preview.
+ *  2. backdrop-filter is silently dropped.
+ *  3. filter: blur() on background blobs is not respected → blobs render
+ *     as hard ellipses, leaking through translucent bento-box backgrounds
+ *     and producing grey rectangles with broken corners.
+ *  4. mix-blend-mode: overlay (grain layer) is dropped → grain renders
+ *     as opaque noise on top.
  *
- * We patch inline styles with `!important` priority before capture and
- * restore them afterwards. Using priority is required because the light
- * theme's spotlight rule already uses !important in CSS.
+ * Strategy: temporarily hide blur/blend layers and make translucent
+ * card surfaces opaque so the rasterizer has clean inputs.
  */
 function applyExportSafeStyles(captureElement) {
     const restorers = [];
@@ -18,85 +21,85 @@ function applyExportSafeStyles(captureElement) {
     const isLightTheme = captureElement.classList.contains('card-theme-light');
     const isSpotlight = captureElement.classList.contains('template-spotlight');
 
+    /** Helper: set a style with !important and remember how to restore it. */
+    const overrideStyle = (el, prop, value) => {
+        const orig = {
+            value: el.style.getPropertyValue(prop),
+            priority: el.style.getPropertyPriority(prop)
+        };
+        el.style.setProperty(prop, value, 'important');
+        restorers.push(() => {
+            el.style.removeProperty(prop);
+            if (orig.value) {
+                el.style.setProperty(prop, orig.value, orig.priority);
+            }
+        });
+    };
+
     // 1. Spotlight title — replace gradient-clipped text with a solid colour.
     if (isSpotlight) {
         const title = captureElement.querySelector('.main-repo-title');
         if (title) {
-            // Save original inline state so we can restore byte-for-byte.
-            const original = {
-                background: title.style.getPropertyValue('background'),
-                backgroundPriority: title.style.getPropertyPriority('background'),
-                backgroundClip: title.style.getPropertyValue('background-clip'),
-                backgroundClipPriority: title.style.getPropertyPriority('background-clip'),
-                webkitBackgroundClip: title.style.getPropertyValue('-webkit-background-clip'),
-                webkitBackgroundClipPriority: title.style.getPropertyPriority('-webkit-background-clip'),
-                webkitTextFillColor: title.style.getPropertyValue('-webkit-text-fill-color'),
-                webkitTextFillColorPriority: title.style.getPropertyPriority('-webkit-text-fill-color'),
-                color: title.style.getPropertyValue('color'),
-                colorPriority: title.style.getPropertyPriority('color')
-            };
-
-            // Solid fallback colour. Light theme = dark text, dark theme = white.
-            // (Picking pure white/dark gives the best contrast since the gradient
-            //  was always intended as decorative.)
             const fallbackColor = isLightTheme ? '#1f2328' : '#ffffff';
-
-            // Use !important to defeat the light-theme CSS rule that itself uses !important.
-            title.style.setProperty('background', 'none', 'important');
-            title.style.setProperty('background-clip', 'border-box', 'important');
-            title.style.setProperty('-webkit-background-clip', 'border-box', 'important');
-            title.style.setProperty('-webkit-text-fill-color', fallbackColor, 'important');
-            title.style.setProperty('color', fallbackColor, 'important');
-
-            restorers.push(() => {
-                // Clear our overrides first
-                title.style.removeProperty('background');
-                title.style.removeProperty('background-clip');
-                title.style.removeProperty('-webkit-background-clip');
-                title.style.removeProperty('-webkit-text-fill-color');
-                title.style.removeProperty('color');
-
-                // Restore originals (only if there was something inline before)
-                if (original.background) {
-                    title.style.setProperty('background', original.background, original.backgroundPriority);
-                }
-                if (original.backgroundClip) {
-                    title.style.setProperty('background-clip', original.backgroundClip, original.backgroundClipPriority);
-                }
-                if (original.webkitBackgroundClip) {
-                    title.style.setProperty('-webkit-background-clip', original.webkitBackgroundClip, original.webkitBackgroundClipPriority);
-                }
-                if (original.webkitTextFillColor) {
-                    title.style.setProperty('-webkit-text-fill-color', original.webkitTextFillColor, original.webkitTextFillColorPriority);
-                }
-                if (original.color) {
-                    title.style.setProperty('color', original.color, original.colorPriority);
-                }
-            });
+            overrideStyle(title, 'background', 'none');
+            overrideStyle(title, 'background-clip', 'border-box');
+            overrideStyle(title, '-webkit-background-clip', 'border-box');
+            overrideStyle(title, '-webkit-text-fill-color', fallbackColor);
+            overrideStyle(title, 'color', fallbackColor);
         }
     }
 
-    // 2. Disable backdrop-filter on bento boxes / footer.
+    // 2. Disable backdrop-filter (html2canvas drops it anyway).
     captureElement.querySelectorAll('.bento-box, .card-footer').forEach((el) => {
-        const orig = {
-            backdropFilter: el.style.getPropertyValue('backdrop-filter'),
-            backdropFilterPriority: el.style.getPropertyPriority('backdrop-filter'),
-            webkitBackdropFilter: el.style.getPropertyValue('-webkit-backdrop-filter'),
-            webkitBackdropFilterPriority: el.style.getPropertyPriority('-webkit-backdrop-filter')
-        };
-        el.style.setProperty('backdrop-filter', 'none', 'important');
-        el.style.setProperty('-webkit-backdrop-filter', 'none', 'important');
-        restorers.push(() => {
-            el.style.removeProperty('backdrop-filter');
-            el.style.removeProperty('-webkit-backdrop-filter');
-            if (orig.backdropFilter) {
-                el.style.setProperty('backdrop-filter', orig.backdropFilter, orig.backdropFilterPriority);
-            }
-            if (orig.webkitBackdropFilter) {
-                el.style.setProperty('-webkit-backdrop-filter', orig.webkitBackdropFilter, orig.webkitBackdropFilterPriority);
-            }
-        });
+        overrideStyle(el, 'backdrop-filter', 'none');
+        overrideStyle(el, '-webkit-backdrop-filter', 'none');
     });
+
+    // 3. Hide background blobs and grain layer entirely during export.
+    //    They depend on filter: blur() and mix-blend-mode: overlay which
+    //    html2canvas does not implement; leaving them in produces hard
+    //    ellipses and an opaque grain layer that bleed through translucent
+    //    surfaces above (Grid bento boxes most notably).
+    captureElement
+        .querySelectorAll('.card-bg-blob1, .card-bg-blob2, .card-bg-blob3, .card-bg-grain')
+        .forEach((el) => {
+            overrideStyle(el, 'display', 'none');
+        });
+
+    // 4. Make translucent surfaces opaque. With blobs hidden the canvas
+    //    background is a flat colour, so we can pick a solid tone that
+    //    matches the original frosted-glass look without transparency
+    //    artefacts.
+    //
+    //    Dark theme: bento-box was rgba(255,255,255,0.03) on #0d1117
+    //                → ≈ #11161e
+    //    Light theme: bento-box was rgba(31,35,40,0.04) on #ffffff
+    //                → ≈ #f5f5f6
+    const bentoBg = isLightTheme ? '#f5f5f6' : '#11161e';
+    const bentoBorder = isLightTheme ? '#e1e4e8' : '#1d242e';
+
+    captureElement.querySelectorAll('.bento-box').forEach((el) => {
+        // Skip templates that intentionally have transparent boxes
+        // (timeline, minimal, terminal). Detect by computed background
+        // — those rules set background: transparent.
+        const computedBg = getComputedStyle(el).backgroundColor;
+        const isTransparent = computedBg === 'rgba(0, 0, 0, 0)' || computedBg === 'transparent';
+        if (isTransparent) return;
+
+        overrideStyle(el, 'background', bentoBg);
+        overrideStyle(el, 'background-color', bentoBg);
+        overrideStyle(el, 'border-color', bentoBorder);
+    });
+
+    // 5. Footer also has a translucent background — make it opaque too.
+    const footer = captureElement.querySelector('.card-footer');
+    if (footer) {
+        const footerBg = isLightTheme ? '#f6f8fa' : '#161b22';
+        const footerBorder = isLightTheme ? '#d0d7de' : '#21262d';
+        overrideStyle(footer, 'background', footerBg);
+        overrideStyle(footer, 'background-color', footerBg);
+        overrideStyle(footer, 'border-top-color', footerBorder);
+    }
 
     return () => restorers.forEach((restore) => restore());
 }
