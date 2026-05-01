@@ -1,79 +1,100 @@
 import { sanitizeFilename } from './utils.js';
 
 /**
- * html2canvas has known issues with:
- *  - background-clip: text + -webkit-text-fill-color: transparent (Spotlight)
- *  - heavy backdrop-filter / blur stacks
- * 
- * We temporarily replace these styles with rasterization-safe equivalents,
- * capture the canvas, then restore everything.
+ * html2canvas (1.4.1) limitations we work around:
+ *  1. background-clip: text + -webkit-text-fill-color: transparent
+ *     → renders the gradient as a solid rectangle behind invisible text.
+ *     Used by .template-spotlight .main-repo-title.
+ *  2. backdrop-filter is silently dropped → can leave footer/bento boxes
+ *     looking inconsistent vs. the live preview.
+ *
+ * We patch inline styles with `!important` priority before capture and
+ * restore them afterwards. Using priority is required because the light
+ * theme's spotlight rule already uses !important in CSS.
  */
 function applyExportSafeStyles(captureElement) {
     const restorers = [];
 
-    // 1. Spotlight title: replace gradient-clipped text with a solid color
-    //    that visually matches the gradient's mid-tone.
-    const spotlightTitle = captureElement.querySelector(
-        '.template-spotlight .main-repo-title'
-    );
-    if (spotlightTitle) {
-        const computed = getComputedStyle(spotlightTitle);
-        const original = {
-            background: spotlightTitle.style.background,
-            webkitBackgroundClip: spotlightTitle.style.webkitBackgroundClip,
-            backgroundClip: spotlightTitle.style.backgroundClip,
-            webkitTextFillColor: spotlightTitle.style.webkitTextFillColor,
-            color: spotlightTitle.style.color
-        };
+    const isLightTheme = captureElement.classList.contains('card-theme-light');
+    const isSpotlight = captureElement.classList.contains('template-spotlight');
 
-        // Pick a fallback color: theme color (var --tc) for visibility.
-        // On light theme, prefer the theme color directly; on dark, use white-ish.
-        const isLightTheme = captureElement.classList.contains('card-theme-light');
-        const themeColor = computed.getPropertyValue('--tc').trim()
-            || getComputedStyle(document.documentElement).getPropertyValue('--tc').trim()
-            || '#58a6ff';
+    // 1. Spotlight title — replace gradient-clipped text with a solid colour.
+    if (isSpotlight) {
+        const title = captureElement.querySelector('.main-repo-title');
+        if (title) {
+            // Save original inline state so we can restore byte-for-byte.
+            const original = {
+                background: title.style.getPropertyValue('background'),
+                backgroundPriority: title.style.getPropertyPriority('background'),
+                backgroundClip: title.style.getPropertyValue('background-clip'),
+                backgroundClipPriority: title.style.getPropertyPriority('background-clip'),
+                webkitBackgroundClip: title.style.getPropertyValue('-webkit-background-clip'),
+                webkitBackgroundClipPriority: title.style.getPropertyPriority('-webkit-background-clip'),
+                webkitTextFillColor: title.style.getPropertyValue('-webkit-text-fill-color'),
+                webkitTextFillColorPriority: title.style.getPropertyPriority('-webkit-text-fill-color'),
+                color: title.style.getPropertyValue('color'),
+                colorPriority: title.style.getPropertyPriority('color')
+            };
 
-        spotlightTitle.style.background = 'none';
-        spotlightTitle.style.webkitBackgroundClip = 'border-box';
-        spotlightTitle.style.backgroundClip = 'border-box';
-        spotlightTitle.style.webkitTextFillColor = isLightTheme ? '#1f2328' : '#ffffff';
-        spotlightTitle.style.color = isLightTheme ? '#1f2328' : '#ffffff';
+            // Solid fallback colour. Light theme = dark text, dark theme = white.
+            // (Picking pure white/dark gives the best contrast since the gradient
+            //  was always intended as decorative.)
+            const fallbackColor = isLightTheme ? '#1f2328' : '#ffffff';
 
-        // Optional: keep accent on part of the title would be complex; solid color
-        // is the cleanest fallback. If you want a two-tone effect, split into spans.
+            // Use !important to defeat the light-theme CSS rule that itself uses !important.
+            title.style.setProperty('background', 'none', 'important');
+            title.style.setProperty('background-clip', 'border-box', 'important');
+            title.style.setProperty('-webkit-background-clip', 'border-box', 'important');
+            title.style.setProperty('-webkit-text-fill-color', fallbackColor, 'important');
+            title.style.setProperty('color', fallbackColor, 'important');
 
-        restorers.push(() => {
-            spotlightTitle.style.background = original.background;
-            spotlightTitle.style.webkitBackgroundClip = original.webkitBackgroundClip;
-            spotlightTitle.style.backgroundClip = original.backgroundClip;
-            spotlightTitle.style.webkitTextFillColor = original.webkitTextFillColor;
-            spotlightTitle.style.color = original.color;
-        });
+            restorers.push(() => {
+                // Clear our overrides first
+                title.style.removeProperty('background');
+                title.style.removeProperty('background-clip');
+                title.style.removeProperty('-webkit-background-clip');
+                title.style.removeProperty('-webkit-text-fill-color');
+                title.style.removeProperty('color');
 
-        // Same for light + spotlight override
-        const lightSpotlight = captureElement.querySelector(
-            '.card-theme-light.template-spotlight .main-repo-title'
-        );
-        if (lightSpotlight && lightSpotlight !== spotlightTitle) {
-            // already handled above by single querySelector path
+                // Restore originals (only if there was something inline before)
+                if (original.background) {
+                    title.style.setProperty('background', original.background, original.backgroundPriority);
+                }
+                if (original.backgroundClip) {
+                    title.style.setProperty('background-clip', original.backgroundClip, original.backgroundClipPriority);
+                }
+                if (original.webkitBackgroundClip) {
+                    title.style.setProperty('-webkit-background-clip', original.webkitBackgroundClip, original.webkitBackgroundClipPriority);
+                }
+                if (original.webkitTextFillColor) {
+                    title.style.setProperty('-webkit-text-fill-color', original.webkitTextFillColor, original.webkitTextFillColorPriority);
+                }
+                if (original.color) {
+                    title.style.setProperty('color', original.color, original.colorPriority);
+                }
+            });
         }
     }
 
-    // 2. Disable backdrop-filter on bento boxes / footer (html2canvas ignores
-    //    it and can produce inconsistent rendering)
-    const blurredEls = captureElement.querySelectorAll(
-        '.bento-box, .card-footer'
-    );
-    blurredEls.forEach((el) => {
+    // 2. Disable backdrop-filter on bento boxes / footer.
+    captureElement.querySelectorAll('.bento-box, .card-footer').forEach((el) => {
         const orig = {
-            backdropFilter: el.style.backdropFilter,
-            webkitBackdropFilter: el.style.webkitBackdropFilter
+            backdropFilter: el.style.getPropertyValue('backdrop-filter'),
+            backdropFilterPriority: el.style.getPropertyPriority('backdrop-filter'),
+            webkitBackdropFilter: el.style.getPropertyValue('-webkit-backdrop-filter'),
+            webkitBackdropFilterPriority: el.style.getPropertyPriority('-webkit-backdrop-filter')
         };
-        el.style.backdropFilter = 'none';
-        el.style.webkitBackdropFilter = 'none';
+        el.style.setProperty('backdrop-filter', 'none', 'important');
+        el.style.setProperty('-webkit-backdrop-filter', 'none', 'important');
         restorers.push(() => {
-            el.style.backdropFilter = orig.backdropFilter;
-            el.style.webkitBackdropFilter = orig.webkitBackdropFilter;
+            el.style.removeProperty('backdrop-filter');
+            el.style.removeProperty('-webkit-backdrop-filter');
+            if (orig.backdropFilter) {
+                el.style.setProperty('backdrop-filter', orig.backdropFilter, orig.backdropFilterPriority);
+            }
+            if (orig.webkitBackdropFilter) {
+                el.style.setProperty('-webkit-backdrop-filter', orig.webkitBackdropFilter, orig.webkitBackdropFilterPriority);
+            }
         });
     });
 
@@ -88,7 +109,6 @@ export async function downloadPreview({ button, captureElement, repoDisplayEleme
     const restoreStyles = applyExportSafeStyles(captureElement);
 
     try {
-        // Determine background color based on card theme
         const isLight = captureElement.classList.contains('card-theme-light');
         const bgColor = isLight ? '#ffffff' : '#0d1117';
 
@@ -105,7 +125,6 @@ export async function downloadPreview({ button, captureElement, repoDisplayEleme
 
         const link = document.createElement('a');
         const safeName = sanitizeFilename(repoDisplayElement.textContent);
-
         link.download = `${safeName}-social-preview.jpg`;
         link.href = canvas.toDataURL('image/jpeg', 0.95);
         link.click();
