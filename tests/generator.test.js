@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { DEFAULT_DESIGN, LAYOUTS, TEMPLATES } from '../assets/js/constants.js';
+import { DEFAULT_DESIGN, FORMATS, LAYOUTS, TEMPLATES } from '../assets/js/constants.js';
 import { compositionProfile, generateDesign, seededRandom } from '../assets/js/generator.js';
 import { renderCard } from '../assets/js/renderer.js';
 import { createDesignLink, readDesignLink, validateDesign, validateProject } from '../assets/js/state.js';
@@ -46,16 +46,21 @@ test('imported generator options are allowlisted and bounded', () => {
     assert.equal(design.layout,DEFAULT_DESIGN.layout); assert.equal(design.typography,DEFAULT_DESIGN.typography);
     assert.equal(design.seed,1); assert.equal(design.corner,36); assert.equal(design.platform,'desktop');
 });
-test('desktop mode retains canvas dimensions and applies the original 77px safe spaces', () => {
-    for (const template of [...TEMPLATES.map(t=>t.id),'generated']) {
-        const svg = renderCard(repo,{...DEFAULT_DESIGN,template,platform:'desktop'});
-        assert.ok(svg.includes('width="1280" height="640"'));
-        assert.ok(svg.includes('data-safe-inset="77"'));
-        assert.ok(svg.includes('data-platform="desktop"'));
-        assert.ok(svg.includes('transform="translate(0 77) scale(1 '));
-        assert.ok(!svg.includes('NaN'));
+test('Desktop fits a full card between equal 77px bands without scaling its title', () => {
+    for (const template of [...TEMPLATES.map(t=>t.id),'generated']) for (const [format, dimensions] of Object.entries(FORMATS)) {
+        const mobile = normalizedSvg(renderCard(repo,{...DEFAULT_DESIGN,template,format,platform:'mobile'}));
+        const desktop = normalizedSvg(renderCard(repo,{...DEFAULT_DESIGN,template,format,platform:'desktop'}));
+        const offset = 77 * 1280 / dimensions.width;
+        const contentHeight = 1280 * dimensions.height / dimensions.width - offset * 2;
+        assert.ok(desktop.includes(`<g data-platform-inset="77" data-layout-height="${contentHeight}" transform="translate(0 ${offset})"`));
+        assert.ok(desktop.includes(`<clipPath id="card-desktopBounds"><rect width="1280" height="${contentHeight}"/>`));
+        assert.ok(desktop.includes(`width="${dimensions.width}" height="${dimensions.height}"`));
+        const sizes = (svg, role) => [...svg.matchAll(new RegExp(`<text[^>]*data-role="${role}"[^>]*>`, 'g'))].map(m => m[0].match(/font-size="([^"]+)"/)[1]);
+        for (const role of ['project-title','repo-description']) assert.deepEqual(new Set(sizes(desktop,role)), new Set(sizes(mobile,role)));
+        assert.ok(desktop.includes(repo.license)); assert.ok(desktop.includes(`github.com/${repo.fullName}`));
+        assert.ok(!desktop.includes('NaN'));
     }
-    assert.ok(!renderCard(repo,DEFAULT_DESIGN).includes('data-safe-inset'));
+    assert.ok(!renderCard(repo,DEFAULT_DESIGN).includes('data-platform-inset'));
 });
 test('each generated layout renders long Unicode titles and optional empty data safely', () => {
     const empty = { ...repo, languages:[],topics:[],description:'',release:null };

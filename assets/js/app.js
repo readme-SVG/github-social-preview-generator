@@ -65,7 +65,7 @@ function syncControls() {
     $('seed-input').value = d.seed; $('corner-output').textContent = d.corner;
     document.querySelectorAll('[data-lock]').forEach((button) => { const locked = d[button.dataset.lock]; button.setAttribute('aria-pressed', String(locked)); button.innerHTML = icon(locked ? 'lock' : 'unlock'); });
     document.querySelectorAll('[data-platform]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.platform === d.platform)));
-    $('platform-note').textContent = d.platform === 'desktop' ? '77 px safe space above & below' : 'Full card';
+    $('platform-note').textContent = d.platform === 'desktop' ? '77 px above & below · full card' : 'Full-height card';
     const type = $('file-type').value, scale = type === 'svg' ? 1 : Number($('export-scale').value);
     $('export-scale').disabled = type === 'svg';
     $('download-type').textContent = type === 'jpeg' ? 'JPG' : type.toUpperCase();

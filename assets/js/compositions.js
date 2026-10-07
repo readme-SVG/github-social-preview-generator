@@ -24,11 +24,11 @@ export function renderComposition(repo, design, ctx) {
         const align = center ? 'text-anchor="middle"' : '';
         let s = text(design.eyebrow, anchor, y + 12, 11, ink, 600, `${align} letter-spacing="2"`);
         const firstBaseline = y + 44 + size * .82;
-        s += rows.map((row, i) => text(row, anchor, firstBaseline + i * size * 1.12, size, color, profile.typography === 'serif' ? 600 : 800, `${align} font-family="${font}" letter-spacing="${profile.typography === 'wide' ? '1' : '-1.8'}"`)).join('');
+        s += rows.map((row, i) => text(row, anchor, firstBaseline + i * size * 1.12, size, color, profile.typography === 'serif' ? 600 : 800, `${align} data-role="project-title" font-family="${font}" letter-spacing="${profile.typography === 'wide' ? '1' : '-1.8'}"`)).join('');
         let last = firstBaseline + (rows.length - 1) * size * 1.12;
         if (description) {
             const descRows = wrapText(description, w, 22, 2, 500);
-            s += descRows.map((row, i) => text(row, anchor, last + 42 + i * 32, 22, muted, 500, align)).join('');
+            s += descRows.map((row, i) => text(row, anchor, last + 42 + i * 32, 22, muted, 500, `${align} data-role="repo-description"`)).join('');
             last += 42 + (descRows.length - 1) * 32;
         }
         if (hasTopics) s += pills(repo.topics, x, last + 48, muted, border, w);
@@ -161,9 +161,9 @@ export function renderComposition(repo, design, ctx) {
             const bannerRows = (size) => wrapText(heading, 1090, size, 100, 800, profile.typography === 'mono', font);
             while (bannerSize > 30 && (bannerRows(bannerSize).length > 2 || bannerRows(bannerSize).length * bannerSize * 1.12 > (square ? 350 : 164))) bannerSize -= 2;
             const bannerTitle = wrapText(heading, 1090, bannerSize, 2, 800, profile.typography === 'mono', font);
-            svg += bannerTitle.map((row, i) => text(row, 64, 142 + bannerSize * .82 + i * bannerSize * 1.12, bannerSize, onAccent, 800, `font-family="${font}" letter-spacing="-2"`)).join('');
+            svg += bannerTitle.map((row, i) => text(row, 64, 142 + bannerSize * .82 + i * bannerSize * 1.12, bannerSize, onAccent, 800, `data-role="project-title" font-family="${font}" letter-spacing="-2"`)).join('');
             svg += text(design.eyebrow, 64, square ? 564 : 360, 12, ink, 600, 'letter-spacing="2"');
-            svg += wrapText(description, 1050, 22, 2).map((row, i) => text(row, 64, (square ? 621 : 400) + i * 30, 22, muted)).join('');
+            svg += wrapText(description, 1050, 22, 2).map((row, i) => text(row, 64, (square ? 621 : 400) + i * 30, 22, muted, 500, 'data-role="repo-description"')).join('');
             if (design.showTopics) svg += pills(repo.topics, 64, square ? 733 : 471, muted, border, 1110);
             if (square) svg += ornament(640, 916, 140);
             break;

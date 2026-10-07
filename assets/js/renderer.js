@@ -1,5 +1,6 @@
 import { FORMATS, LANG_COLORS, THEMES } from './constants.js';
 import { renderComposition } from './compositions.js';
+import { renderDesktopCard } from './desktop.js';
 import { contrastColor, escapeXml as esc, fmt, formatDate, luminance, mixColor } from './utils.js';
 
 export const GITHUB_PATH = 'M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z';
@@ -71,9 +72,9 @@ function fork(x, y, color) { return `<g data-symbol="fork" transform="translate(
 
 function multiline(value, x, y, width, size, color, max = 3, weight = 500, mono = false) {
     const rows = wrapText(value, width, size, max, weight, mono);
-    return rows.map((row, i) => text(row, x, y + i * size * 1.5, size, color, weight)).join('');
+    return rows.map((row, i) => text(row, x, y + i * size * 1.5, size, color, weight, 'data-role="repo-description"')).join('');
 }
-function title(value, x, y, width, base, color, factor, maxLines = 2, maxBottom = Infinity) {
+function title(value, x, y, width, base, color, factor, maxLines = 2, maxBottom = Infinity, role = 'project-title') {
     let size = base * factor / 100;
     const original = size;
     while (size > 32) {
@@ -83,7 +84,7 @@ function title(value, x, y, width, base, color, factor, maxLines = 2, maxBottom 
     }
     const startY = y - (original - size) * .7;
     const rows = wrapText(value, width, size, maxLines, 800);
-    return { svg: rows.map((row, i) => text(row, x, startY + i * size * 1.13, size, color, 800, 'letter-spacing="-3"')).join(''), bottom: startY + (rows.length - 1) * size * 1.13, size };
+    return { svg: rows.map((row, i) => text(row, x, startY + i * size * 1.13, size, color, 800, `data-role="${role}" letter-spacing="-3"`)).join(''), bottom: startY + (rows.length - 1) * size * 1.13, size };
 }
 function pills(topics, x, y, color, border, maxWidth = 900) {
     let cursor = x, svg = '';
@@ -260,7 +261,7 @@ export function renderCard(repo, design, { thumbnail = false, embedFont = false 
         svg += rect(boxX, boxY, boxW, boxH, 'url(#releaseGlow)', 24);
         svg += text(design.showRelease && repo.release ? 'LATEST RELEASE' : 'READY TO BUILD', boxX + 28, boxY + 47, 13, onAccent, 700, 'letter-spacing="2"');
         const version = design.showRelease && repo.release ? repo.release.tag : '{ }';
-        const versionText = title(version, boxX + 25, boxY + (square ? 184 : 145), boxW - 54, square ? 104 : 62, onAccent, 100, 2);
+        const versionText = title(version, boxX + 25, boxY + (square ? 184 : 145), boxW - 54, square ? 104 : 62, onAccent, 100, 2, Infinity, 'release-version');
         svg += versionText.svg;
         svg += text(design.showRelease && repo.release ? formatDate(repo.release.published) : 'Your next great idea starts here.', boxX + 28, boxY + boxH - 32, 15, onAccent);
         if (design.showStats) svg += statRow(repo, 64, H - 128, fg, muted);
@@ -273,15 +274,15 @@ export function renderCard(repo, design, { thumbnail = false, embedFont = false 
             text, rect, line, wrapText, statRow, languageBar, pills, identity, releaseBadge, commonFooter });
     }
     const prefix = `card${++svgSequence}-`;
-    const inset = 77 * 1280 / width;
-    const desktopScale = (H - inset * 2) / H;
-    // Match the original full-width Desktop card with 77px top/bottom spacers.
-    // Compact the composition vertically and compensate each text transform so
-    // font glyphs shrink proportionally instead of being vertically stretched.
-    const desktopSvg = design.platform === 'desktop' ? svg.replace(/<text x="([^"]+)" y="([^"]+)" font-size="([^"]+)"/g, (_, x, y, size) =>
-        `<text x="${x}" y="${y}" font-size="${Number(size) * desktopScale}" transform="translate(0 ${y}) scale(1 ${1 / desktopScale}) translate(0 ${-Number(y)})"`)
-        .replace(/(<(?:g|path) data-symbol="[^"]+" transform=")translate\(([^ )]+) ([^ )]+)\)(?: scale\(([^)]+)\))?"/g, (_, start, x, y, scale) => `${start}translate(${x} ${y}) scale(${Number(scale || 1) * desktopScale} ${Number(scale || 1)})"`) : svg;
-    const artwork = design.platform === 'desktop' ? `${rect(0, 0, 1280, H, bg)}<g data-safe-inset="77" transform="translate(0 ${inset}) scale(1 ${desktopScale})">${desktopSvg}</g>` : svg;
+    const offset = 77 * 1280 / width;
+    const contentHeight = H - offset * 2;
+    let artwork = svg;
+    if (design.platform === 'desktop') {
+        const defs = svg.match(/^<defs>[\s\S]*?<\/defs>/)[0];
+        const desktop = renderDesktopCard(repo, design, { H: contentHeight, square, bg, surface, fg, muted, border, ink, accent, onAccent, heading, description,
+            text, rect, line, wrapText, github, statRow, languageBar, pills, motif }, svg);
+        artwork = `${defs}<defs><clipPath id="desktopBounds"><rect width="1280" height="${contentHeight}"/></clipPath></defs>${rect(0, 0, 1280, H, bg)}<g data-platform-inset="77" data-layout-height="${contentHeight}" transform="translate(0 ${offset})" clip-path="url(#desktopBounds)">${desktop}</g>`;
+    }
     const markup = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 1280 ${H}" data-platform="${design.platform || 'mobile'}" ${thumbnail ? 'aria-hidden="true"' : `role="img" aria-label="${esc(repo.fullName)} repository card"`}><title>${esc(heading)} — ${esc(repo.fullName)}</title>${fontStyle}<g font-family="Manrope, Arial, sans-serif" clip-path="url(#bounds)">${artwork}</g></svg>`;
     return markup.replace(/id="(\w+)"/g, (_, id) => `id="${prefix}${id}"`).replace(/url\(#(\w+)\)/g, (_, id) => `url(#${prefix}${id})`);
 }
