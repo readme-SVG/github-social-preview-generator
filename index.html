@@ -1,184 +1,104 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Social Preview Generator</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./assets/css/styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
-    <script type="module" src="./assets/js/app.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11141a">
+  <meta name="description" content="Thirty repository card templates, a procedural design generator, and precise PNG, JPEG and SVG exports.">
+  <title>RepoCard — a good first impression</title>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="./assets/fonts/Manrope.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="./assets/css/styles.css">
+  <script type="module" src="./assets/js/app.js"></script>
 </head>
 <body>
-    <a class="repo-link-btn" href="https://github.com/readme-SVG/github-social-preview-generator" target="_blank" rel="noopener noreferrer" aria-label="Open project repository">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        <span>View Source on GitHub</span>
-    </a>
-    <div class="top-label">Generator</div>
-    <h1>GitHub Social <span>Preview</span></h1>
-
-    <div class="input-row">
-        <input type="text" id="inp" placeholder="https://github.com/owner/repo" autocomplete="off" spellcheck="false">
-        <button class="btn-fetch" id="btn-go">Generate</button>
+  <a class="icon-button corner-github" href="https://github.com/readme-SVG/github-social-preview-generator" target="_blank" rel="noopener noreferrer" aria-label="Source code on GitHub" data-icon="github"></a>
+  <main class="workspace">
+    <h1 class="sr-only">Repository card editor</h1>
+    <div class="editor-layout">
+      <aside class="inspector" aria-label="Card settings">
+        <section class="repository-panel">
+          <div class="panel-heading"><h2>Repository</h2><span class="step-number">01</span></div>
+          <form id="repo-form"><label class="sr-only" for="repo-input">GitHub repository URL or owner/repository</label><div class="repo-input-wrap"><span data-icon="github"></span><input id="repo-input" placeholder="owner / repository" value="withastro/astro" autocomplete="off" spellcheck="false"></div><button type="submit" class="import-button" id="import-button">Import repository<span data-icon="arrow-right"></span></button></form>
+          <div class="repo-message" id="repo-status" role="status"><span class="status-dot"></span>Example snapshot · Astro</div>
+          <button class="text-button" id="load-example">Try with an example <span>↗</span></button>
+        </section>
+        <div class="inspector-tabs" role="tablist" aria-label="Editor sections"><button role="tab" id="tab-design" aria-controls="panel-design" aria-selected="true" tabindex="0" data-tab="design">Design</button><button role="tab" id="tab-content" aria-controls="panel-content" aria-selected="false" tabindex="-1" data-tab="content">Content</button><button role="tab" id="tab-export" aria-controls="panel-export" aria-selected="false" tabindex="-1" data-tab="export">Export</button></div>
+        <section id="panel-design" class="settings-panel" role="tabpanel" aria-labelledby="tab-design">
+          <div class="field-heading"><label>Template</label><span id="template-count">01 / 30</span></div>
+          <div class="template-grid" id="template-grid"></div>
+          <button class="text-button browse-templates" id="browse-templates">Browse all 30 templates <span>↗</span></button>
+          <div class="control-divider"></div>
+          <div class="field-heading"><label>Composition lab</label><span class="lab-tag">∞</span></div>
+          <p class="muted-description">Build a new design from layout, type and geometry.</p>
+          <div class="generator-actions"><button class="import-button" id="generate-composition"><span data-icon="shuffle"></span>Generate design</button><button class="outline-button" id="remix-composition" title="Keep this layout and remix its visual details">Remix</button></div>
+          <details class="generator-controls" id="generator-controls"><summary>Fine-tune &amp; lock elements</summary>
+            <div class="generator-field"><label for="layout-select">Composition</label><button class="lock-button" data-lock="lockLayout" aria-label="Lock composition" aria-pressed="false" data-icon="unlock"></button></div><select id="layout-select" data-generator="layout"></select>
+            <div class="generator-field"><label for="typography-select">Typography</label><button class="lock-button" data-lock="lockTypography" aria-label="Lock typography" aria-pressed="false" data-icon="unlock"></button></div><select id="typography-select" data-generator="typography"></select>
+            <div class="generator-field"><label for="background-select">Background</label><button class="lock-button" data-lock="lockBackground" aria-label="Lock background" aria-pressed="false" data-icon="unlock"></button></div><select id="background-select" data-generator="background"></select>
+            <div class="generator-field"><label for="decoration-select">Decoration</label><button class="lock-button" data-lock="lockDecoration" aria-label="Lock decoration" aria-pressed="false" data-icon="unlock"></button></div><select id="decoration-select" data-generator="decoration"></select>
+            <div class="generator-field"><label>Keep colors &amp; appearance</label><button class="lock-button" data-lock="lockPalette" aria-label="Lock palette" aria-pressed="false" data-icon="unlock"></button></div>
+            <label class="input-label" for="spacing-select">Spacing</label><select id="spacing-select" data-generator="spacing"><option value="compact">Compact</option><option value="balanced">Balanced</option><option value="airy">Airy</option></select>
+            <label class="input-label" for="seed-input">Design seed</label><input class="text-input" type="number" id="seed-input" min="1" max="4294967295" step="1" aria-label="Design seed">
+            <div class="field-heading range-heading"><label for="corner-input">Corner radius</label><output id="corner-output">20</output></div><input type="range" id="corner-input" min="0" max="36" value="20" data-generator="corner">
+          </details>
+          <div id="generator-variations" class="generator-variations" aria-label="Generated variations"></div>
+          <div class="control-divider"></div>
+          <div class="field-heading"><label>Color palette</label><span id="palette-name">Slate</span></div>
+          <div class="palette-row" id="palette-row"></div>
+          <div class="color-field"><label for="accent-input">Custom accent</label><div><input type="color" id="accent-picker" value="#b8c5d8" aria-label="Choose accent color"><input id="accent-input" value="#B8C5D8" spellcheck="false" maxlength="7" aria-label="Accent hexadecimal color"></div></div>
+          <div class="field-heading appearance-heading"><label>Appearance</label></div>
+          <div class="segmented" aria-label="Card appearance"><button data-appearance="dark" aria-pressed="true"><span data-icon="moon"></span>Dark</button><button data-appearance="light" aria-pressed="false"><span data-icon="sun"></span>Light</button></div>
+          <div class="toggle-row"><label for="texture">Background detail<span>A little extra character</span></label><input type="checkbox" id="texture" data-design="texture" checked role="switch"></div>
+        </section>
+        <section id="panel-content" class="settings-panel" role="tabpanel" aria-labelledby="tab-content" hidden>
+          <div class="field-heading"><label>Make it yours</label><button class="text-button" id="reset-text">Reset text</button></div>
+          <label class="input-label" for="title-input">Project title</label><input id="title-input" class="text-input" data-design="title" maxlength="100" placeholder="Repository name">
+          <label class="input-label" for="description-input">Description</label><textarea id="description-input" data-design="description" maxlength="500" rows="3" placeholder="What makes your project special?"></textarea>
+          <label class="input-label" for="eyebrow-input">Small heading</label><input id="eyebrow-input" class="text-input" data-design="eyebrow" maxlength="65">
+          <label class="input-label" for="footer-input">Footer / call to action</label><input id="footer-input" class="text-input" data-design="footer" maxlength="80" placeholder="github.com/owner/repo">
+          <div class="field-heading range-heading"><label for="title-size">Title size</label><output id="title-size-output">100%</output></div><input type="range" id="title-size" data-design="titleSize" min="65" max="125" value="100">
+          <div class="control-divider"></div><div class="field-heading"><label>Stars &amp; forks</label><span id="stats-mode-label">Showcase</span></div>
+          <div class="segmented" aria-label="Statistics source"><button data-stats-mode="showcase" aria-pressed="true">Showcase</button><button data-stats-mode="github" aria-pressed="false">GitHub data</button></div>
+          <button class="outline-button full-width" id="reshuffle-stats"><span data-icon="shuffle"></span>New random numbers</button>
+          <p class="muted-description stats-description" id="stats-description">Randomized counts for a little extra impact. Saved with your design.</p>
+          <div class="control-divider"></div><div class="field-heading"><label>On your card</label><span>Display options</span></div>
+          <div class="toggle-row"><label for="show-owner">Repository owner</label><input type="checkbox" id="show-owner" data-design="showOwner" checked role="switch"></div>
+          <div class="toggle-row"><label for="show-stats">Stars &amp; forks</label><input type="checkbox" id="show-stats" data-design="showStats" checked role="switch"></div>
+          <div class="toggle-row"><label for="show-languages">Languages &amp; breakdown</label><input type="checkbox" id="show-languages" data-design="showLanguages" checked role="switch"></div>
+          <div class="toggle-row"><label for="show-topics">Repository topics</label><input type="checkbox" id="show-topics" data-design="showTopics" checked role="switch"></div>
+          <div class="toggle-row"><label for="show-license">License</label><input type="checkbox" id="show-license" data-design="showLicense" checked role="switch"></div>
+          <div class="toggle-row"><label for="show-release">Latest release</label><input type="checkbox" id="show-release" data-design="showRelease" checked role="switch"></div>
+          <div class="toggle-row"><label for="show-mark">GitHub mark</label><input type="checkbox" id="show-mark" data-design="showMark" checked role="switch"></div>
+          <div class="data-note" id="data-note"></div>
+        </section>
+        <section id="panel-export" class="settings-panel" role="tabpanel" aria-labelledby="tab-export" hidden>
+          <div class="field-heading"><label for="format-select">Canvas size</label><span data-icon="frame"></span></div>
+          <select id="format-select" data-design="format"><option value="github">GitHub · 1280 × 640</option><option value="social">Open Graph · 1200 × 630</option><option value="square">Square · 1080 × 1080</option></select>
+          <label class="input-label" for="file-type">File format</label><select id="file-type"><option value="png">PNG · lossless</option><option value="jpeg">JPEG · smaller file</option><option value="svg">SVG · editable vector</option></select>
+          <label class="input-label" for="export-scale">Resolution</label><select id="export-scale"><option value="1">1× · standard</option><option value="2">2× · high resolution</option></select>
+          <p class="export-note" id="export-note">1280 × 640 px. Ready for your GitHub social preview.</p>
+          <button class="import-button" id="export-panel-button"><span data-icon="download"></span>Download card</button>
+          <div class="control-divider"></div><div class="field-heading"><label>Keep your design</label></div><p class="muted-description">Save an editable project, or share a link with your settings.</p>
+          <button class="outline-button full-width" id="save-project"><span data-icon="save"></span>Save project</button>
+          <button class="outline-button full-width" id="open-project"><span data-icon="folder"></span>Open project</button>
+          <input type="file" id="project-file" accept=".json,application/json" hidden>
+          <button class="outline-button full-width" id="share-button"><span data-icon="link"></span>Copy design link</button>
+          <div class="export-tip"><span data-icon="help"></span><p>On GitHub: repository <strong>Settings → General → Social preview</strong>. Upload your PNG or JPEG.</p></div>
+        </section>
+      </aside>
+      <section class="canvas-column" aria-label="Card preview">
+        <div class="canvas-toolbar"><div class="preview-label"><span class="live-dot"></span>Live preview<span class="toolbar-divider"></span><span id="canvas-size">1280 × 640</span></div><div class="toolbar-actions"><button class="icon-button" id="undo-button" aria-label="Undo" disabled data-icon="undo"></button><button class="icon-button" id="redo-button" aria-label="Redo" disabled data-icon="redo"></button><span class="toolbar-divider"></span><button class="icon-button" id="fullscreen-button" aria-label="Expand preview" data-icon="expand"></button></div></div>
+        <div class="platform-row"><span>Platform</span><div class="segmented platform-switch" aria-label="Platform"><button data-platform="mobile" aria-pressed="true"><span data-icon="mobile"></span>Mobile</button><button data-platform="desktop" aria-pressed="false"><span data-icon="desktop"></span>Desktop</button></div><span class="platform-note" id="platform-note">Full card</span></div>
+        <div class="canvas-stage" id="canvas-stage"><div class="canvas-hint top-hint"><span></span>MAKE SOMETHING WORTH SHARING<span></span></div><div class="preview-card" id="preview-card" aria-label="Generated repository card"></div><div class="canvas-hint bottom-hint"><span data-icon="frame"></span><span id="canvas-caption">GitHub social preview</span><span class="hint-dot">·</span><span>100% vector. All yours.</span></div></div>
+        <div class="preview-bottom"><div><span class="template-indicator" id="template-indicator">01</span><div><h2 id="active-template-name">Aurora</h2><p id="active-template-description">A little atmosphere. A big impression.</p></div></div><div class="preview-bottom-actions"><button class="subtle-button" id="shuffle-button"><span data-icon="shuffle"></span>Surprise me</button><button class="download-button" id="download-button"><span data-icon="download"></span>Download <span id="download-type">PNG</span><span data-icon="arrow-down"></span></button></div></div>
+        <section class="collection" id="collection"><div class="collection-heading"><div><span class="section-kicker">30 STARTING POINTS. ENDLESS COMPOSITIONS.</span><h2>Find your first impression.</h2></div><span class="collection-counter">30 layouts <span>↙</span></span></div><div class="collection-filters"><input class="text-input" id="template-search" placeholder="Search templates…" aria-label="Search templates"><select id="category-filter" aria-label="Template category"><option value="all">All styles</option><option>Showcase</option><option>Minimal</option><option>Technical</option><option>Insights</option><option>Announcement</option></select><span id="filter-count">30 designs</span></div><div class="collection-grid" id="collection-grid"></div><p id="no-templates" class="muted-description" hidden>No templates match. Try another search.</p></section>
+        <footer class="workspace-footer"><span id="save-status">Saved on this device</span><button class="subtle-button" id="open-help"><span data-icon="help"></span>How it works</button></footer>
+      </section>
     </div>
-
-    <div class="status" id="status"></div>
-
-    <div class="theme-row">
-        <span class="theme-label">Theme</span>
-        <div class="theme-dot active" data-theme="blue"></div>
-        <div class="theme-dot" data-theme="green"></div>
-        <div class="theme-dot" data-theme="purple"></div>
-        <div class="theme-dot" data-theme="orange"></div>
-        <div class="theme-dot" data-theme="red"></div>
-        <div class="theme-dot" data-theme="cyan"></div>
-        <div class="color-picker-wrap" id="custom-picker-wrap">
-            <div class="theme-dot color-picker-trigger" id="custom-picker-trigger" title="Custom color"></div>
-            <input type="color" id="custom-color-picker" value="#58a6ff" aria-label="Pick custom theme color">
-            <div class="color-picker-panel" id="custom-picker-panel">
-                <div class="cp-preview-row">
-                    <div class="cp-swatch" id="cp-swatch"></div>
-                    <input class="cp-hex-input" id="cp-hex" type="text" maxlength="7" value="#58a6ff" spellcheck="false">
-                </div>
-                <div class="cp-sliders">
-                    <label class="cp-label">Hue</label>
-                    <input class="cp-range cp-hue" id="cp-hue" type="range" min="0" max="360" value="213">
-                    <label class="cp-label">Saturation</label>
-                    <input class="cp-range cp-sat" id="cp-sat" type="range" min="0" max="100" value="100">
-                    <label class="cp-label">Lightness</label>
-                    <input class="cp-range cp-lit" id="cp-lit" type="range" min="10" max="90" value="61">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="template-row">
-        <span class="template-label">Template</span>
-        <button class="template-btn active" data-template="grid">Grid</button>
-        <button class="template-btn" data-template="timeline">Timeline</button>
-        <button class="template-btn" data-template="spotlight">Spotlight</button>
-        <button class="template-btn" data-template="minimal">Minimal</button>
-        <button class="template-btn" data-template="compact">Compact</button>
-        <button class="template-btn" data-template="terminal">Terminal</button>
-        <button class="template-btn" data-template="masonry">Masonry</button>
-    </div>
-
-    <div class="platform-row">
-        <span class="platform-label">Platform</span>
-        <button class="template-btn active" data-platform="mobile">Mobile</button>
-        <button class="template-btn" data-platform="desktop">Desktop</button>
-    </div>
-
-    <div class="card-theme-row" role="group" aria-label="Card appearance">
-        <span class="card-theme-label">Appearance</span>
-        <button class="template-btn active" data-card-theme="dark" aria-pressed="true">Dark</button>
-        <button class="template-btn" data-card-theme="light" aria-pressed="false">Light</button>
-    </div>
-
-    <div class="dl-row">
-        <button class="btn-dl" id="btn-jpg">
-            <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M2.75 14A1.75 1.75 0 011 12.25v-2.5a.75.75 0 011.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25v-2.5a.75.75 0 011.5 0v2.5A1.75 1.75 0 0113.25 14H2.75z"/><path d="M7.25 7.689V2a.75.75 0 011.5 0v5.689l1.97-1.969a.749.749 0 111.06 1.06l-3.25 3.25a.749.749 0 01-1.06 0L4.22 6.78a.749.749 0 111.06-1.06l1.97 1.969z"/></svg>
-            JPEG
-        </button>
-        <span class="dim">JPEG 1280×640</span>
-    </div>
-
-    <div class="frame">
-        <div class="loading-overlay" id="loader">
-            <div class="spinner"></div>
-            <div class="loading-text" id="loader-text">Fetching data...</div>
-        </div>
-        <div class="card" id="capture">
-            <div class="card-bg">
-                <div class="card-bg-blob1" id="blob1"></div>
-                <div class="card-bg-blob2" id="blob2"></div>
-                <div class="card-bg-blob3" id="blob3"></div>
-                <div class="card-bg-grain" id="grain-layer">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640">
-                        <filter id="grain">
-                            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="5" stitchTiles="stitch"/>
-                            <feColorMatrix type="saturate" values="0"/>
-                        </filter>
-                        <rect width="100%" height="100%" filter="url(#grain)" opacity="0.18"/>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="card-header">
-                <svg class="gh-logo" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-                <div class="gh-path">
-                    <span class="gh-path-text" id="o-repo-display">owner/repo</span>
-                    <span class="gh-path-slash">/</span>
-                </div>
-                <div class="hdr-nav">
-                    <span>Full requests</span>
-                    <span>Issues</span>
-                    <span>Moderactions</span>
-                </div>
-                <div class="hdr-spacer"></div>
-                <div class="hdr-btns">
-                    <div class="hdr-btn-group">
-                        <div class="hdr-btn">
-                            <svg class="hdr-btn-icon" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
-                            Star
-                        </div>
-                        <div class="hdr-btn cnt" id="o-stars">0</div>
-                    </div>
-                    <div class="hdr-btn-group">
-                        <div class="hdr-btn">
-                            <svg class="hdr-btn-icon" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm3-8.75a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
-                            Fork
-                        </div>
-                        <div class="hdr-btn cnt" id="o-forks">0</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-body">
-                <div class="bento-container">
-                    <div class="main-repo-title" id="o-title">Repository</div>
-                    <div class="main-repo-desc" id="o-desc">Paste a GitHub repository link and press Generate</div>
-
-                    <div class="bento-grid" id="o-features">
-                        <div class="bento-box">
-                            <div class="bento-box-title">Activity</div>
-                            <div class="bento-box-text">Repository stats will appear here.</div>
-                        </div>
-                        <div class="bento-box">
-                            <div class="bento-box-title">Tech Stack</div>
-                            <div class="bento-box-text">Language details will appear here.</div>
-                        </div>
-                        <div class="bento-box">
-                            <div class="bento-box-title">Details</div>
-                            <div class="bento-box-text">License and branch info will appear here.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-footer">
-                <div class="foot-langs" id="o-langs">
-                    <div class="foot-item">
-                        <span class="foot-dot" style="background:#8b949e"></span>
-                        <span>Code</span>
-                    </div>
-                </div>
-                <div class="foot-item" id="o-lic-wrap" style="display:none;">
-                    <svg class="foot-icon" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.75.75a.75.75 0 00-1.5 0V2h-.984c-.305 0-.604.08-.869.23l-1.288.737A.25.25 0 013.984 3H1.75a.75.75 0 000 1.5h.428L.066 9.192a.75.75 0 00.154.838l.53-.53-.53.53v.001l.002.002.004.004.012.011.048.042.104.08c.09.065.216.148.378.22.344.195.83.396 1.466.396.636 0 1.122-.2 1.466-.396a2.534 2.534 0 00.546-.386l.012-.011.004-.004.002-.002-.53-.53.53.53a.75.75 0 00.154-.838L2.822 4.5h.162c.305 0 .604-.08.869-.23l1.289-.737a.25.25 0 01.124-.033h.984V13h-2.5a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-2.5V3.5h.984a.25.25 0 01.124.033l1.289.737c.265.15.564.23.869.23h.162l-2.112 4.692a.75.75 0 00.154.838l.53-.53-.53.53v.001l.002.002.004.004.012.011.048.042.104.08c.09.065.216.148.378.22.344.195.83.396 1.466.396.636 0 1.122-.2 1.466-.396a2.534 2.534 0 00.546-.386l.012-.011.004-.004.002-.002-.53-.53.53.53a.75.75 0 00.154-.838L13.178 4.5h.428a.75.75 0 000-1.5h-2.234a.25.25 0 01-.124-.033l-1.289-.737A1.75 1.75 0 009.091 2H8.75V.75z"/></svg>
-                    <span id="o-lic">MIT</span>
-                </div>
-                <div class="foot-item">
-                    <svg class="foot-icon" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1h-8a1 1 0 00-1 1v6.708A2.486 2.486 0 014.5 9h8V1.5zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/></svg>
-                    <span id="o-size">—</span>
-                </div>
-                <div class="foot-item">
-                    <svg class="foot-icon" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122V6c0 .73-.593 1.322-1.322 1.322H7.927A.678.678 0 007.25 8v.878a2.25 2.25 0 11-1.5 0V5.372a2.25 2.25 0 111.5 0v1.836l.678-.678A2.822 2.822 0 019.178 5.822h1.572V5.372a2.25 2.25 0 012.25-2.122zM4.25 12.75a.75.75 0 100-1.5.75.75 0 000 1.5zm0-8.5a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
-                    <span id="o-branch">main</span>
-                </div>
-            </div>
-        </div>
-    </div>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <dialog id="help-dialog"><div class="dialog-heading"><span class="brand-icon">r<span>↗</span></span><button class="icon-button" id="close-help" aria-label="Close help" data-icon="close"></button></div><h2>A great cover in three steps.</h2><ol><li><strong>Bring your repository.</strong><p>Paste a public GitHub URL or owner/repo. We import real stars, forks, topics, languages and the latest release.</p></li><li><strong>Give it your personality.</strong><p>Choose a layout, color and size. Edit the copy and decide which details belong on your card.</p></li><li><strong>Put it out there.</strong><p>Download a PNG, JPEG or editable SVG. Use it as your GitHub social preview or share it anywhere.</p></li></ol><p class="dialog-note">Your project is saved in this browser. The example uses a dated GitHub snapshot; import the repository for current data. Design links contain settings and a repository reference, not a frozen data snapshot.</p><button class="import-button" id="help-done">Let's make something<span data-icon="arrow-right"></span></button></dialog>
+  <noscript><p class="noscript">Enable JavaScript to use the card editor.</p></noscript>
 </body>
 </html>

@@ -1,0 +1,13 @@
+{
+  "name": "repocard-studio",
+  "version": "2.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A browser-native GitHub repository card studio",
+  "scripts": {
+    "start": "python server.py",
+    "test": "node --test tests/*.test.js",
+    "lint": "node scripts/check.js"
+  },
+  "engines": { "node": ">=20" }
+}

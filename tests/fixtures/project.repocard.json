@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "source": "saved",
+  "design": {
+    "template": "bento",
+    "statsMode": "github",
+    "theme": "violet",
+    "accent": "#c1a3ff",
+    "appearance": "dark",
+    "format": "square",
+    "title": "Saved project check",
+    "description": "A fixture for verifying project import in the browser.",
+    "eyebrow": "BROWSER TEST FIXTURE"
+  },
+  "repository": {
+    "name": "hello-world",
+    "owner": "octocat",
+    "fullName": "octocat/hello-world",
+    "description": "Test fixture",
+    "stars": 1234,
+    "forks": 42,
+    "issues": 2,
+    "branch": "main",
+    "license": "MIT",
+    "topics": ["testing"],
+    "languages": [{"name": "JavaScript", "percent": 75}, {"name": "CSS", "percent": 25}],
+    "fetchedAt": "2026-10-07T00:00:00Z",
+    "updated": "2026-10-07T00:00:00Z",
+    "contributors": []
+  }
+}

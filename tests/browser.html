@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RepoCard browser export checks</title><link rel="stylesheet" href="../assets/css/styles.css"><style>body{padding:30px}h1{font-size:24px}#results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:25px;margin:25px 0}article{min-width:0}img{width:100%;height:auto;background:#111}article p{font-size:12px}.passed{color:#b5f5c4}.failed{color:#ffab9a}.comparison{display:grid;grid-template-columns:1fr 1fr;gap:10px}.comparison svg{width:100%;height:auto}button{padding:12px 20px;border:1px solid #52735c;border-radius:6px}a{text-decoration:underline}</style></head><body><h1>Browser export checks</h1><p>Every exported image is decoded and its actual dimensions and MIME type are verified. SVGs must contain the embedded font and no external assets.</p><button id="run">Run export checks</button><p id="status" role="status">Ready</p><div id="results"></div><script type="module">
+import {DEFAULT_DESIGN, FORMATS, LAYOUTS, TEMPLATES} from '../assets/js/constants.js';
+import {createExport} from '../assets/js/export.js';
+import {normalizeRepository} from '../assets/js/github.js';
+import {prepareFont,renderCard} from '../assets/js/renderer.js';
+import {randomShowcaseStats} from '../assets/js/utils.js';
+import {generateDesign} from '../assets/js/generator.js';
+document.getElementById('run').onclick=async()=>{
+const status=document.getElementById('status'),results=document.getElementById('results');
+document.getElementById('run').disabled=true;results.replaceChildren();let pass=0,fail=0;
+try{
+await prepareFont();
+const files=await Promise.all(['repo','languages','release'].map(async p=>(await fetch(`../assets/demo-${p}.json`)).json()));
+const repo=normalizeRepository(...files);
+const showcase=randomShowcaseStats();
+const cases=[...TEMPLATES.map(t=>({template:t.id,format:'github',type:'png',scale:1,appearance:t.appearance||(t.id==='editorial'?'light':'dark')})),{template:'bento',format:'square',type:'png',scale:1},{template:'blueprint',format:'social',type:'jpeg',scale:2},{template:'release',format:'github',type:'svg',scale:1},{template:'aurora',format:'github',type:'png',scale:1,title:'Очень длинное название полезного проекта для GitHub',description:'Описание с кириллицей, эмодзи 🚀 и длинным словом: '+'непрерывныйтекст'.repeat(15)}, {...generateDesign(DEFAULT_DESIGN,98765),format:'github',type:'png',scale:1}, {...generateDesign(DEFAULT_DESIGN,5678),format:'square',platform:'desktop',type:'jpeg',scale:1}, {template:'aurora',format:'github',platform:'desktop',type:'png',scale:1}, {...generateDesign(DEFAULT_DESIGN,13579),format:'social',type:'svg',scale:1}];
+cases.push(...LAYOUTS.flatMap(layout=>['github','square'].map(format=>({template:'generated',layout,format,type:'png',scale:1,titleSize:125,title:'Очень длинное название полезного репозитория для разработчиков',description:'Описание с кириллицей и подробностями о полезном проекте. '+'Разрабатывайте и делитесь результатом. '.repeat(8)}))));
+for(const item of cases.filter(item=>!new URLSearchParams(location.search).has('desktop')||item.platform==='desktop')){
+status.textContent=`Checking ${item.template} / ${item.type}…`;
+const design={...DEFAULT_DESIGN,...showcase,...item};
+const article=document.createElement('article'),label=document.createElement('p');article.append(label);results.append(article);
+try{
+const blob=await createExport(repo,design,item.type,item.scale);
+if(blob.type!==(item.type==='jpeg'?'image/jpeg':item.type==='svg'?'image/svg+xml;charset=utf-8':'image/png'))throw new Error('Incorrect MIME type');
+const url=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob);}),image=new Image();image.src=url;await image.decode();
+if(image.naturalWidth!==FORMATS[item.format].width*item.scale||image.naturalHeight!==FORMATS[item.format].height*item.scale)throw new Error('Incorrect image dimensions');
+if(item.type==='svg'&&!(await blob.text()).includes('data:font/ttf;base64,'))throw new Error('Font not embedded');
+label.textContent=`PASS ${item.template} / ${item.type} / ${image.naturalWidth} × ${image.naturalHeight} / ${Math.round(blob.size/1024)} KB`;label.className='passed';
+const compare=document.createElement('div');compare.className='comparison';const preview=document.createElement('div');preview.innerHTML=renderCard(repo,design);compare.append(preview,image);article.append(compare);
+const inkContext=document.createElement('canvas').getContext('2d');
+const textBoxes=Array.from(preview.querySelectorAll('text')).filter(t=>t.textContent.trim()).map(t=>{const style=getComputedStyle(t);inkContext.font=`${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;const metrics=inkContext.measureText(t.textContent),svgBox=t.getBBox();return {text:t.textContent,box:{x:svgBox.x,y:Number(t.getAttribute('y'))-metrics.actualBoundingBoxAscent,width:svgBox.width,height:metrics.actualBoundingBoxAscent+metrics.actualBoundingBoxDescent}};});
+for(let a=0;a<textBoxes.length;a++)for(let b=a+1;b<textBoxes.length;b++){const p=textBoxes[a],q=textBoxes[b];const ix=Math.min(p.box.x+p.box.width,q.box.x+q.box.width)-Math.max(p.box.x,q.box.x),iy=Math.min(p.box.y+p.box.height,q.box.y+q.box.height)-Math.max(p.box.y,q.box.y);if(ix>3&&iy>3)throw new Error(`Overlapping text: ${p.text} / ${q.text}`);}
+const link=document.createElement('a');link.href=url;link.download=`${item.template}-${item.format}-${item.type}.${item.type==='jpeg'?'jpg':item.type}`;link.textContent='Download tested output';article.append(link);pass++;
+}catch(e){label.textContent=`FAIL ${item.template}: ${e.message}`;label.className='failed';fail++;}
+}
+status.textContent=`${pass} passed, ${fail} failed. Left: preview. Right: actual exported image.`;status.className=fail?'failed':'passed';
+}catch(e){status.textContent=e.message;status.className='failed';}finally{document.getElementById('run').disabled=false;}
+};
+</script></body></html>

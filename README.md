@@ -1,378 +1,120 @@
-[![SVG Animation](https://readme-svg-typing-generator.vercel.app/api?lines=GitHub%20Social%20Preview%20Generator&animation=glitch&color=1f6feb&background=00000000&size=47&font=sans&duration=5000&pause=250&width=850&height=70&letterSpacing=normal&center=true&vCenter=false&multiline=false&repeat=true&random=false)](https://github.com/readme-SVG/readme-SVG-typing-generator)
+# RepoCard Studio
 
-[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
+A GitHub repository card editor with **30 templates**, a procedural composition generator, public repository data, and consistent PNG, JPEG and SVG exports. Rebuilt from GitHub Social Preview Generator.
 
-Create production-ready `1280×640` Open Graph preview images from public GitHub repositories directly in the browser, with zero build tooling and deterministic export behavior.
+[See exported examples](Examples/REPOCARD.md).
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
-[![CodeQL](https://img.shields.io/badge/SAST-CodeQL-2f80ed?style=for-the-badge&logo=github)](./.github/workflows/sast.yml)
-[![Lint Checks](https://img.shields.io/badge/CI-Lint%20%26%20Static%20Checks-6f42c1?style=for-the-badge&logo=githubactions)](./.github/workflows/lint.yml)
-[![OpenSSF Scorecard](https://img.shields.io/badge/Security-OpenSSF%20Scorecard-22863a?style=for-the-badge)](./.github/workflows/scorecard.yml)
-[![Python](https://img.shields.io/badge/Python-3.9%2B-3776ab?style=for-the-badge&logo=python)](server.py)
+![RepoCard Studio editor](Image/repocard-studio.png)
 
-> [!NOTE]
-> This repository is a static front-end application with a minimal Python server for local development only.
-
-[![Examples](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Image/readmeING_github-social-preview-generator.png)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
-
-<details>
-  <summary>Examples of Generated Previews <strong>← Open</strong></summary>
-  <br>
-
-[![Examples-1](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_Contribution-Painter-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
-
-[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
-
-[![Examples-2](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_Issues-heroes-badge-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
-
-[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
-
-[![Examples-3](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_ascii-text-generator-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
-
-[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
-
-[![Examples-4](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_github-profile-readme-generator-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
-
-[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
-
-[![Examples-5](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_readme-PR-contributors-rating-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
-
-[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
-
-[![Examples-6](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_readme-SVG-profile-bengo-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
-
-[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
-
-[![Examples-7](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/readme-SVG_readme-SVG-wave-divider-generator-social-preview.jpg)](https://github.com/readme-SVG/github-social-preview-generator/blob/main/Examples/EXAMPLES.md)
-
-[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
-
-</details>
-
-## Table of Contents
-
-- [Features](#features)
-- [Tech Stack & Architecture](#tech-stack--architecture)
-  - [Core Stack](#core-stack)
-  - [Project Structure](#project-structure)
-  - [Key Design Decisions](#key-design-decisions)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [License](#license)
-- [Support the Project](#support-the-project)
-
-## Features
-
-- Client-side generation of GitHub social preview assets at fixed `1280×640` dimensions.
-- Flexible repository input parser supporting both:
-  - Full URL format (for example, `https://github.com/owner/repo`)
-  - Shorthand format (`owner/repo`)
-- Real-time metadata retrieval from the GitHub REST API, including:
-  - Repository name, owner, and description
-  - Default branch, creation year, and last update timestamp
-  - License metadata and repository size
-- Language composition visualization using repository language byte statistics.
-- Multiple visual themes and templates for post-branding consistency:
-  - Themes: blue, green, purple, orange, red, cyan
-  - Layouts: `grid`, `timeline`, `spotlight`, `minimal`, `compact`
-- High-quality export pipeline with both `PNG` and `JPEG` output modes.
-- Sanitized, deterministic filenames for generated assets.
-- Graceful fallback behavior when optional API calls fail (for example, language endpoint degradation).
-- Browser-native runtime with no mandatory backend service for production hosting.
-- Security and quality automation integrated through GitHub Actions (linting, static analysis, scorecard).
-
-> [!TIP]
-> This project is ideal for release announcements, changelog promotion, repository showcases, and portfolio posts where visual consistency matters.
-
-## Tech Stack & Architecture
-
-### Core Stack
-
-- **HTML5** for semantic structure and rendering surface.
-- **CSS3** for component styling, theme tokens, and card composition.
-- **Vanilla JavaScript (ES Modules)** for modular app logic and DOM orchestration.
-- **Python 3** for local static file serving (`server.py`).
-- **GitHub REST API** (`/repos/{owner}/{repo}` and languages endpoints) for metadata hydration.
-- **`html2canvas`** (loaded from CDN) for DOM-to-image rasterization.
-
-### Project Structure
-
-```text
-.
-├── index.html
-├── server.py
-├── LICENSE
-├── CONTRIBUTING.md
-├── README.md
-├── assets
-│   ├── css
-│   │   └── styles.css
-│   ├── js
-│   │   ├── app.js
-│   │   ├── constants.js
-│   │   ├── dom.js
-│   │   ├── export.js
-│   │   ├── github.js
-│   │   └── utils.js
-│   └── vendor
-│       └── gif.js
-├── Image
-├── trigger action
-│   └── trigger_action.py
-└── .github
-    ├── FUNDING.yml
-    ├── labels.yml
-    ├── dependabot.yml
-    ├── pull_request_template.md
-    ├── ISSUE_TEMPLATE
-    │   ├── bug_report.yml
-    │   └── feature_request.yml
-    └── workflows
-        ├── ai-issue.yml
-        ├── dependabot-auto-merge.yml
-        ├── label-sync.yml
-        ├── lint.yml
-        ├── sast.yml
-        └── scorecard.yml
-```
-
-### Key Design Decisions
-
-- **Frontend-first execution model**
-  - All core functionality runs in the browser to minimize operational overhead.
-  - Deployment remains static-host friendly (GitHub Pages, Netlify, object storage, CDN).
-- **Module boundary separation**
-  - API access, rendering, exports, constants, and parsing utilities are isolated in dedicated files.
-  - This reduces coupling and simplifies targeted maintenance.
-- **Deterministic output dimensions**
-  - Fixed `1280×640` export dimensions ensure predictable OG-style rendering.
-- **Resilient metadata pipeline**
-  - Non-critical failures (such as language endpoint issues) do not block primary preview generation.
-- **Minimal local tooling requirements**
-  - Python’s standard library HTTP server avoids mandatory Node bundlers for contributors.
-
-```mermaid
-flowchart LR
-    A[User Input: owner/repo or URL] --> B[utils.parseInput]
-    B -->|Valid| C[github.fetchRepository]
-    C --> D[github.fetchLanguages]
-    C --> E[dom.renderRepository]
-    D --> F[dom.renderLanguages]
-    E --> G[app.applyTheme/applyTemplate]
-    F --> G
-    G --> H[Live Preview Card]
-    H --> I[export.downloadPreview]
-    I --> J[html2canvas Rasterization]
-    J --> K[PNG or JPEG Download]
-    B -->|Invalid| L[User-facing Status Error]
-```
-
-> [!IMPORTANT]
-> Unauthenticated GitHub API calls are rate-limited. For heavy usage, consider adding a proxy service with token-based requests and cache controls.
-
-## Getting Started
-
-### Prerequisites
-
-- `Python >= 3.9` (recommended `3.11+`) for local static hosting.
-- A modern browser with ES Module support (Chrome, Edge, Firefox, Safari).
-- Internet connectivity for:
-  - GitHub API requests
-  - External font assets
-  - `html2canvas` CDN delivery
-
-### Installation
-
-```bash
-git clone https://github.com/<your-org-or-user>/github-social-preview-generator.git
-cd github-social-preview-generator
-```
-
-Start the local development server:
+**Run locally:**
 
 ```bash
 python server.py
 ```
 
-Open the application:
+Open **http://127.0.0.1:8000**. If the port is busy, use `python server.py --port 8001`.
+
+No bundler, install step, CDN scripts, account or API token is required. Use a local HTTP server rather than opening `index.html` directly. The app can also be deployed as static files under a domain or subdirectory.
+
+## What you can make
+
+| Layout | Best for |
+| --- | --- |
+| Aurora | An atmospheric project cover with soft gradients and geometric detail |
+| Editorial | A restrained, warm typographic cover |
+| Blueprint | Technical tools and libraries with an orbital diagram and drafting grid |
+| Bento | Repository statistics and a proportional language breakdown |
+| Terminal | A developer-focused cover with clone command, stack and repository metadata |
+| Release | Release announcements with the actual latest GitHub release tag and date |
+
+The library also includes **Monolith, Obsidian, Signal, Orbit, Noir, Neon, Paper, Swiss, Prism, Circuit, Schematic, Capsule, Horizon, Waveform, Gridline, Gallery, Spectrum, Mosaic, Dossier, Folio, Eclipse, Badge, Chromatic and Stack**. Search the gallery or filter it by style. These use poster, column, framed, split, diagonal, network, mosaic and other compositions, with different typography and geometric artwork.
+
+## Composition lab
+
+**Generate design** builds a new composition from independent choices, rather than selecting a preset. **Remix** keeps the current composition and changes its visual treatment. Four generated previews offer alternative designs to choose from.
+
+Open **Fine-tune & lock elements** to choose a composition, typography, background, decoration, spacing and corner radius. Lock layout, typography, background, decoration or colors to preserve them during generation. A numeric design seed reproduces the generated settings and geometry; saved projects and design links keep it. Generating a design preserves repository data, editable copy, canvas size, platform and the chosen Showcase numbers.
+
+## Mobile and Desktop
+
+The **Platform: Mobile / Desktop** switch is separate from export dimensions. Mobile fills the card. Desktop restores the original full-width composition with 77-pixel safe spaces above and below, compacting the content and reducing type without stretching glyphs. Both modes export the chosen canvas dimensions, including the standard 1280 × 640 GitHub card. Platform is saved in projects, links and undo history.
+
+- Import a public GitHub URL, `owner/repo`, or a repository subpage.
+- Repository topics, code languages, license, push date, latest release and a sample of contributors from GitHub.
+- **Showcase statistics are enabled by default**: stars are randomized from 1,000–2,000 and forks from 300–700, preserving the original generator’s visual effect. Generate another combination in Content, or switch to **GitHub data** for actual counts. The chosen numbers stay consistent across the preview, gallery, exports, project saves and design links.
+- A dark gray-blue interface, seven card palettes including neutral Slate, a custom hex accent, light/dark appearance and background detail toggle.
+- Editable title, description, small heading and footer. Long names fit automatically; excess description text is ellipsized. Unicode is supported by the bundled font and system fallback fonts.
+- Choose which metadata appears on your card. Different templates arrange it for their purpose.
+- GitHub **1280 × 640**, Open Graph **1200 × 630**, or square **1080 × 1080**. Square layouts recompose the content.
+- PNG and JPEG at 1× or 2×, plus an editable SVG with an embedded Manrope font.
+- Automatic local save, editable JSON projects, design undo/redo, full-screen preview and randomized design combinations.
+- Share a design link with the repository reference and design settings. Opening the link imports current GitHub data. JSON projects preserve the original data snapshot.
+- Responsive interface with keyboard-accessible controls and reduced-motion support.
+
+The default Astro example is a real, bundled GitHub snapshot from **October 7, 2026**, explicitly labeled in the editor. Import the repository to refresh its data. The example, editor and exports remain usable when GitHub is unavailable.
+
+## Using a card on GitHub
+
+1. Import your repository and customize the card.
+2. In **Export**, choose GitHub dimensions, PNG or JPEG, and 1× resolution.
+3. Download the image.
+4. On GitHub, open the repository’s **Settings → General → Social preview** and upload it.
+
+SVG is intended for further editing and other publishing workflows. It is not a GitHub social-preview upload format.
+
+## Data and privacy
+
+The app reads the public GitHub REST API directly from the browser. There is no app backend, telemetry, sign-in or stored token. Local settings and the current repository snapshot are stored in this browser’s local storage. Export a JSON project to preserve them separately.
+
+GitHub applies [unauthenticated request limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api). Successful API responses are cached in memory for five minutes. Requests time out after 15 seconds and stale imports are cancelled. Missing language, release or contributor data does not block the card. Errors preserve the current design and explain how to recover.
+
+Language percentages use repository code **bytes**, not file counts. GitHub’s open-issues count includes pull requests. In a monorepo, the latest release may belong to an individual package. Contributor names are a small API sample, not a complete contributor count.
+
+## Architecture
+
+The same SVG renderer generates both the visible preview and exported artwork. Native browser rasterization produces PNG/JPEG; there is no html2canvas dependency or temporary removal of design effects. All fonts and artwork are local or procedural, and exported SVGs have no external asset dependencies.
 
 ```text
-http://127.0.0.1:8000
+index.html                  Accessible editor UI
+server.py                   Local Python static server
+assets/css/styles.css       Responsive interface and local font
+assets/js/app.js             Editor state, events, history and persistence
+assets/js/constants.js       Palettes, formats and default settings
+assets/js/renderer.js        Shared SVG card renderer and text fitting
+assets/js/compositions.js    Additional composition families and seeded artwork
+assets/js/generator.js       Reproducible generation, remixing and element locks
+assets/js/github.js          API requests, normalization and cache
+assets/js/state.js           Project validation and Unicode share links
+assets/js/export.js          SVG-to-canvas image export and downloads
+assets/js/dom.js             Icons and status notifications
+assets/js/utils.js           Strict repository parsing and escaping
+assets/fonts/               Manrope font and its OFL license
+assets/demo-*.json           Dated example repository snapshot
+tests/                      Unit tests and browser export verification
 ```
 
-> [!WARNING]
-> Loading `index.html` with a `file://` URL can break ES module imports in some browsers. Always use `python server.py` during local development.
+User text is XML-escaped before rendering. Imported project fields are validated, bounded and allowlisted. Repository URLs must use the actual `github.com` hostname; arbitrary API destinations and lookalike hosts are rejected.
 
-## Testing
+## Verification
 
-The repository currently relies on syntax validation and CI automation rather than a dedicated unit-test harness.
-
-Run local checks:
+Node.js 20+ is only needed for development checks; the app itself has no Node runtime dependency.
 
 ```bash
-# Python syntax validation
-python -m py_compile server.py "trigger action/trigger_action.py"
-
-# JavaScript syntax checks
-node --check assets/js/app.js
-node --check assets/js/constants.js
-node --check assets/js/dom.js
-node --check assets/js/export.js
-node --check assets/js/github.js
-node --check assets/js/utils.js
+node scripts/check.js
+node --test tests/*.test.js
+python -m py_compile server.py
 ```
 
-CI workflows in `.github/workflows/` provide additional quality gates:
+The same checks are available as `npm run lint` and `npm test` and run in the lint GitHub Actions workflow. No npm dependencies need installing.
 
-- `lint.yml` for lint/static checks
-- `sast.yml` for CodeQL static analysis
-- `scorecard.yml` for OpenSSF scorecard evaluation
+For browser verification, serve the project, open **http://127.0.0.1:8000/tests/browser.html**, and click **Run export checks**. Its 70 cases render all 30 templates, compare preview and actual exports, verify decoded dimensions and MIME types, and check text ink bounds for overlaps. They cover generated designs, Desktop safe areas, square format, 2× JPEG, embedded-font SVG, and long Cyrillic text at maximum title size in every generated layout. Downloads are available for each output. Desktop/mobile interface layout and editor interactions should also be reviewed in a browser.
 
-> [!CAUTION]
-> Keep CI workflow assumptions synchronized with repository structure to avoid false negatives when directories evolve.
+## Hosting
 
-## Deployment
+Deploy `index.html` and the complete `assets/` directory to GitHub Pages or another static host. There is no build step. `server.py` is for local development and binds only to `127.0.0.1`. Internet connectivity is needed only for live GitHub imports; local files, existing designs and export work without third-party font or script services.
 
-### Static Deployment Targets
+## Credits and license
 
-Deploy `index.html` and the `assets/` directory to any static host:
+Original project: [readme-SVG/github-social-preview-generator](https://github.com/readme-SVG/github-social-preview-generator), by [OstinUA](https://github.com/OstinUA). The original repository license is preserved in [LICENSE](LICENSE). Manrope is included under the [SIL Open Font License](assets/fonts/OFL.txt).
 
-- GitHub Pages
-- Netlify
-- Vercel (static mode)
-- S3 + CloudFront
-- NGINX or Apache static site hosting
-
-### Production Deployment Guidance
-
-- Configure caching for static files (`assets/*`) with immutable cache headers where possible.
-- Consider API proxying if you need:
-  - Higher request limits
-  - Authenticated API access
-  - Centralized observability and request telemetry
-- Pin third-party runtime dependencies and external assets to stable versions.
-- Apply CSP headers compatible with required GitHub API and CDN/font origins.
-
-### CI/CD Integration
-
-This repository includes GitHub Actions workflows for:
-
-- Security analysis (`CodeQL`, `OpenSSF Scorecard`)
-- Lint and static checks
-- Repository automation (labels, dependency management, issue automation)
-
-## Usage
-
-### 1) Interactive UI Flow
-
-1. Open the app in your browser.
-2. Enter either `owner/repo` or a full GitHub repository URL.
-3. Click the generate action to fetch metadata.
-4. Choose a theme and layout template.
-5. Export as `PNG` or `JPEG`.
-
-### 2) Programmatic Data Fetch Flow
-
-```js
-import { parseInput } from './assets/js/utils.js';
-import { fetchRepository, fetchLanguages } from './assets/js/github.js';
-
-async function buildPreviewModel(input) {
-  // Parse and normalize input into owner/repo pair.
-  const parsed = parseInput(input);
-  if (!parsed) throw new Error('Invalid repository reference');
-
-  // Fetch primary repository metadata.
-  const repository = await fetchRepository(parsed.owner, parsed.repo);
-
-  // Fetch and rank repository languages by byte count.
-  const languages = await fetchLanguages(repository.languages_url);
-
-  // Return model used by the rendering layer.
-  return {
-    fullName: `${repository.owner.login}/${repository.name}`,
-    description: repository.description ?? 'No description provided.',
-    defaultBranch: repository.default_branch,
-    topLanguages: languages.map(([name]) => name),
-  };
-}
-```
-
-### 3) Export Preview Programmatically
-
-```js
-import { downloadPreview } from './assets/js/export.js';
-
-downloadPreview({
-  type: 'png', // or 'jpeg'
-  button: document.getElementById('btn-png'),
-  captureElement: document.getElementById('capture'),
-  repoDisplayElement: document.getElementById('o-repo-display'),
-});
-```
-
-## Configuration
-
-### Runtime Constants
-
-Primary constants are declared in `assets/js/constants.js`:
-
-- `GITHUB_API_BASE_URL`: Base repository API URL.
-- `DEFAULT_THEME`: Startup theme key.
-- `THEMES`: Theme palette/token mapping.
-- `LANG_COLORS`: Language badge color mapping.
-
-### Local Server Settings
-
-`server.py` uses configurable constants:
-
-- `HOST` (default `127.0.0.1`)
-- `PORT` (default `8000`)
-
-Edit these values directly to match your local environment.
-
-### Environment Variables for Automation Scripts
-
-The automation script `trigger action/trigger_action.py` expects the following environment variables in CI contexts:
-
-- `GITHUB_TOKEN`
-- `GH_MODELS_TOKEN`
-- `REPOSITORY`
-- `EVENT_NAME`
-- `COMMIT_SHA`
-- `PR_NUMBER`
-- `ALLOWED_USER`
-
-Example `.env` template for CI-like local runs:
-
-```dotenv
-GITHUB_TOKEN=ghp_xxx
-GH_MODELS_TOKEN=ghm_xxx
-REPOSITORY=owner/repo
-EVENT_NAME=pull_request
-COMMIT_SHA=<sha>
-PR_NUMBER=1
-ALLOWED_USER=<github-username>
-```
-
-> [!NOTE]
-> The front-end application itself does not require a `.env` file for normal local usage.
-
-## License
-
-This project is licensed under the **MIT License**. See [`LICENSE`](./LICENSE) for full terms.
-
-## Support the Project
-
-[![Patreon](https://img.shields.io/badge/Patreon-OstinFCT-f96854?style=flat-square&logo=patreon)](https://www.patreon.com/OstinFCT)
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-fctostin-29abe0?style=flat-square&logo=ko-fi)](https://ko-fi.com/fctostin)
-[![Boosty](https://img.shields.io/badge/Boosty-Support-f15f2c?style=flat-square)](https://boosty.to/ostinfct)
-[![YouTube](https://img.shields.io/badge/YouTube-FCT--Ostin-red?style=flat-square&logo=youtube)](https://www.youtube.com/@FCT-Ostin)
-[![Telegram](https://img.shields.io/badge/Telegram-FCTostin-2ca5e0?style=flat-square&logo=telegram)](https://t.me/FCTostin)
-
-If you find this tool useful, consider leaving a star on GitHub or supporting the author directly.
+[Support on Ko-fi](https://ko-fi.com/fctostin) · [Patreon](https://www.patreon.com/OstinFCT)

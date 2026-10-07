@@ -1,0 +1,35 @@
+{
+  "name": "astro",
+  "full_name": "withastro/astro",
+  "owner": {
+    "login": "withastro"
+  },
+  "description": "The web framework for content-driven websites.",
+  "stargazers_count": 63090,
+  "forks_count": 3837,
+  "open_issues_count": 109,
+  "license": {
+    "spdx_id": "NOASSERTION"
+  },
+  "language": "TypeScript",
+  "default_branch": "main",
+  "homepage": "https://astro.build",
+  "topics": [
+    "astro",
+    "blog",
+    "browser",
+    "components",
+    "hybrid",
+    "islands",
+    "node",
+    "server",
+    "static",
+    "static-site-generator",
+    "universal"
+  ],
+  "pushed_at": "2026-10-07T11:52:32Z",
+  "updated_at": "2026-10-07T11:42:59Z",
+  "created_at": "2021-03-15T17:19:47Z",
+  "archived": false,
+  "snapshot_at": "2026-10-07T00:00:00Z"
+}
