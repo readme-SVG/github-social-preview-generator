@@ -1,6 +1,6 @@
 [![SVG Animation](https://readme-svg-typing-generator.vercel.app/api?lines=GitHub%20Social%20Preview%20Generator&animation=glitch&color=1f6feb&background=00000000&size=47&font=sans&duration=5000&pause=250&width=850&height=70&letterSpacing=normal&center=true&vCenter=false&multiline=false&repeat=true&random=false)](https://github.com/readme-SVG/readme-SVG-typing-generator)
 
-[![Line](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=4&width=100%)](https://github.com/OstinUA)
+[![animated-line](https://github.com/readme-SVG/animated-line/blob/main/STORAGE/line-svg-3E80ED.svg)](https://github.com/readme-SVG/animated-line)
 
 Create production-ready `1280×640` Open Graph preview images from public GitHub repositories directly in the browser, with zero build tooling and deterministic export behavior.
 
