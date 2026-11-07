@@ -89,7 +89,7 @@ if event_name == "push":
     commit = repo.get_commit(commit_sha)
 
     actor_login = os.environ.get("GITHUB_ACTOR", "").strip().lower()
-    if actor_login not in allowed_users:
+    if actor_login and actor_login not in allowed_users:
         print(f"Action performed by {actor_login}, not in allowed list. Skipping.")
         exit(0)
 
@@ -113,7 +113,7 @@ elif event_name == "pull_request":
     pr_number = int(os.environ.get("PR_NUMBER"))
     pr = repo.get_pull(pr_number)
     author_login = pr.user.login.strip().lower()
-    if author_login not in allowed_users:
+    if author_login and author_login not in allowed_users:
         exit(0)
 
     pr_ref = pr
@@ -443,10 +443,16 @@ def call_model(prompt: str, retries: int = 3, delay: int = 5) -> dict:
             raw = data['choices'][0]['message']['content'].strip()
             raw = re.sub(r'^```json\s*|```$', '', raw, flags=re.MULTILINE).strip()
             return json.loads(raw)
+        except requests.exceptions.Timeout:
+            print(f"Attempt {attempt + 1} timed out. Retrying...")
+        except requests.exceptions.RequestException as e:
+            print(f"Attempt {attempt + 1} network error: {e}")
+        except json.JSONDecodeError as e:
+            print(f"Attempt {attempt + 1} JSON decode error: {e}")
         except Exception as e:
             print(f"Attempt {attempt + 1} failed: {e}")
-            if attempt < retries - 1:
-                time.sleep(delay)
+        if attempt < retries - 1:
+            time.sleep(delay)
 
     print("All attempts failed. Exiting gracefully.")
     exit(0)
