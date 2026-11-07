@@ -5,17 +5,16 @@
 [![Views](https://img.shields.io/badge/Profile_Views-%31&#56;%33-blueviolet?style=for-the-badge)](https://github.com/OstinUA)
 [![OstinUA](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=2&)](https://github.com/OstinUA)
 
-
 Hello! Thank you for your interest in contributing to this project. I am always open to any help, whether it's fixing bugs, adding new features, improving documentation, or just sharing fresh ideas. 
 
-This document is not a strict set of rules, but a simple guide on how we can comfortably and productively work together.
+This document is not a strict set of rules, but a simple guide on how we can comfortably and productively work together. I am very friendly and will be incredibly glad for absolutely any help!
 
 ## ⬢ How You Can Help
 
-* **Found a bug?** Open an Issue and briefly describe what went wrong and how to reproduce it.
-* **Have a cool idea?** Create an Issue with your proposal. It's always best to discuss an idea first before spending time writing code.
-* **Improving documentation.** Fixing typos, expanding instructions, or translating — absolutely any help is valuable.
-* **Ready to write code?** Feel free to fork the repository and open a Pull Request.
+- **Have a cool idea?** You can create an Issue to discuss it first, or just jump straight in and open a Pull Request! Do whatever is more comfortable for you. We can always figure out the details together to make the project better.
+- **Found a bug?** Open an Issue and briefly describe what went wrong, or just fix it right away and send a PR.
+- **Ready to write code?** Feel free to fork the repository and open a Pull Request immediately. I will review it, help out if needed, and take care of the rest.
+- **Improving documentation.** Fixing typos, expanding instructions, or translating — absolutely any help is highly valuable.
 
 ## ⬢ Pull Request Process
 
@@ -29,14 +28,15 @@ The workflow here is as straightforward as possible:
 
 ## ⬢ A Few Simple Requests
 
-* Try to stick to the code style already used in the project.
-* Make your commit messages clear so it's easy to understand what changed.
-* If your Pull Request resolves a specific Issue, mention its number in the description (e.g., `Closes #42`).
-* If the logic changes, please update the relevant section in the README.
+- Try to stick to the code style already used in the project.
+- Make your commit messages clear so it's easy to understand what changed.
+- If your Pull Request resolves a specific Issue, mention its number in the description (e.g., `Closes #42`).
+- If the logic changes, please update the relevant section in the README.
 
 ## ⬢ Feedback
 
-I try to review all Issues and Pull Requests as quickly as possible. If I haven't replied in a while, don't hesitate to ping me in the comments.
+I try to review all Issues and Pull Requests as quickly as possible. Don't worry if your code isn't perfect — I'll review it, suggest tweaks, and help merge it. If I haven't replied in a while, don't hesitate to ping me in the comments.
 
 The main rule is mutual respect. Welcome, and thank you for your contribution!
+
 [![OstinUA](https://capsule-render.vercel.app/api?type=rect&color=3e80ed&height=2&)](https://github.com/OstinUA)
