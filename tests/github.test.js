@@ -34,5 +34,5 @@ test('404, rate limits and connection failures explain recovery', async (t) => {
     });
     await assert.rejects(fetchRepository('test', 'missing'), /not found/);
     await assert.rejects(fetchRepository('test', 'limited'), /limit reached/);
-    await assert.rejects(fetchRepository('test', 'offline'), /connect to GitHub/);
+    await assert.rejects(fetchRepository('test', 'offline'), /connect to GitHub; existing card remains available/);
 });
